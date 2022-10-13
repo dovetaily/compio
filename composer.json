@@ -1,0 +1,27 @@
+{
+    "name": "dovetaily/compio",
+    "type": "library",
+    "license": "MIT",
+    "description": "Generator of component.",
+    "autoload": {
+        "psr-4": {
+            "Compio\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gedeon Timothy",
+            "github": "gedeontimothy",
+            "email": "gedeonbateko3@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "scripts": {
+        "post-autoload-dump": [
+            "Compio\\ComposerScripts::postAutoloadDump"
+        ]
+    },
+    "require": {
+        "php": ">=7.3"
+    }
+}
