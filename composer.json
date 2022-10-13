@@ -19,6 +19,18 @@
     "scripts": {
         "post-autoload-dump": [
             "Compio\\ComposerScripts::postAutoloadDump"
+        ],
+        "post-install-cmd": [
+            "Compio\\ComposerScripts::postAutoloadDump"
+        ],
+        "post-create-project-cmd": [
+            "Compio\\ComposerScripts::postAutoloadDump"
+        ],
+        "post-root-package-install": [
+            "Compio\\ComposerScripts::postAutoloadDump"
+        ],
+        "post-package-install": [
+            "Compio\\ComposerScripts::postAutoloadDump"
         ]
     },
     "require": {
