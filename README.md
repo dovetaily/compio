@@ -33,3 +33,4 @@ Here, you just need to add this in the `Kernel.php` file knowing that this line 
 ```php
 require_once getcwd() . '\vendor\compio\compio\src\Environments\Laravel\V_Pack1\routes_commands.php';
 ```
+And it's ready to be used !
