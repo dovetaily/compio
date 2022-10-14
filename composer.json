@@ -2,12 +2,14 @@
     "name": "dovetaily/compio",
     "type": "library",
     "license": "MIT",
-    "description": "Generator of component.",
+    "description": "Generator of component - It works temporarily only on Laravel with Artisan(CLI) by generating Blade components and others are in development (like `Twig` `VueJs`, ...)",
+    "keywords": ["php", "laravel", "console", "component", "blade", "laravel-blade", "laravel_blade", "artisan", "artisan-blade", "artisan_blade"],
     "autoload": {
         "psr-4": {
             "Compio\\": "src/"
         }
     },
+    "homepage" : "https://github.com/dovetaily/compio",
     "authors": [
         {
             "name": "Gedeon Timothy",
@@ -15,21 +17,14 @@
             "email": "gedeonbateko3@gmail.com"
         }
     ],
+    "suggest": {
+        "laravel/laravel": "This library(dovetaily/compio) works well with a laravel project version >=5.5 (generate blade component)",
+        "twig/twig": "In development...",
+        "strewtey/strewtey": "In development..."
+    },
     "minimum-stability": "dev",
     "scripts": {
         "post-autoload-dump": [
-            "Compio\\ComposerScripts::postAutoloadDump"
-        ],
-        "post-install-cmd": [
-            "Compio\\ComposerScripts::postAutoloadDump"
-        ],
-        "post-create-project-cmd": [
-            "Compio\\ComposerScripts::postAutoloadDump"
-        ],
-        "post-root-package-install": [
-            "Compio\\ComposerScripts::postAutoloadDump"
-        ],
-        "post-package-install": [
             "Compio\\ComposerScripts::postAutoloadDump"
         ]
     },
