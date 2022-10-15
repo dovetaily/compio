@@ -2,10 +2,11 @@
 
 namespace Compio\Environments\Laravel;
 
+use Compio\ListenInterface;
 use Compio\Listen as B_Listen;
 use Compio\Traits\Singleton;
 
-class Listen extends B_Listen{
+class Listen extends B_Listen implements ListenInterface{
 
 	use Singleton;
 
@@ -19,7 +20,6 @@ class Listen extends B_Listen{
 	 * @return void
 	 */
 	public function __construct(){
-
 		$pack = self::version_supported();
 		if($pack !== false && method_exists($c = 'Compio\Environments\Laravel\\' . $pack . '\CommandInit', 'init')){
 			$m = $c . '::init'; $m();
@@ -27,5 +27,13 @@ class Listen extends B_Listen{
 		else echo "Laravel version is not supported !";
 	}
 
+	/**
+	 * Get the current environment version is running.
+	 *
+	 * @return string|bool
+	 */
+	public static function version() : string|bool {
+		return class_exists(\Illuminate\Foundation\Application::class) && defined('\Illuminate\Foundation\Application::VERSION') ? \Illuminate\Foundation\Application::VERSION : false;
+	}
 
 }
