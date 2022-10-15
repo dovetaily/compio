@@ -50,9 +50,9 @@ $ php artisan compio:component
   Component created successfully.
 ```
 It will generate 4 files :
-#### .\root_project\public\css\components\ ... .css
+#### .\root_project\public\css\components\ ... MyComponent.css
 ```css
-..-mycomponent-class_name_generate{
+.mycomponent-class_name_generate{
 	/*...*/
 }
 .z-1{ z-index: 1; }
@@ -63,7 +63,7 @@ It will generate 4 files :
 /* ---- COLOR START ----  */
 
 	@media (prefers-color-scheme: dark) {
-		..-mycomponent-class_name_generate{
+		.mycomponent-class_name_generate{
 			/*...*/
 		}
 	}
@@ -120,18 +120,18 @@ It will generate 4 files :
 
 /* ---- MEDIA SCREEN STOP ---- */
 ```
-#### .\root_project\public\js\components\ ... .js
+#### .\root_project\public\js\components\ ... MyComponent.js
 ```js
-// document.querySelector('..-mycomponent-class_name_generate') ...
+// document.querySelector('.mycomponent-class_name_generate') ...
 
 // (function($) {
-//	// $('..-mycomponent-class_name_generate') ...
+//	// $('.mycomponent-class_name_generate') ...
 // })(jQuery);
 ```
 #### .\root_project\resources\views\components\ ... MyComponent.blade.php
 ```html
 <!-- COMPONENT MyComponent START -->
-	<div class=".-lorem-class_name_generate">
+	<div class=".MyComponent-class_name_generate">
 		 <!-- Content... -->
 	</div>
 <!-- COMPONENT MyComponent STOP -->
@@ -140,7 +140,7 @@ It will generate 4 files :
 ```php
 <?php
 // @command
-namespace App\View\Components\.;
+namespace App\View\Components;
 
 use Illuminate\View\Component;
 
@@ -149,10 +149,10 @@ class MyComponent extends Component
 
 	private $assets = [
 		'css' => [
-			'css/components/./MyComponent.css'
+			'css/components/MyComponent.css'
 		],
 		'js' => [
-			'js/components/./MyComponent.js'
+			'js/components/MyComponent.js'
 		],
 	];
 
@@ -185,6 +185,11 @@ class MyComponent extends Component
 		]);
 	}
 
+	/**
+	 * Get the assets of this class
+	 *
+	 * @return array|string
+	 */
 	public static function getAssets(string|null $key = null){
 		return empty($key) ? $this->assets : (array_key_exists($key, $this->assets) ? $this->assets[$key] : false);
 	}
