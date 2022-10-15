@@ -25,6 +25,7 @@ abstract class CommandInit{
 					if(file_put_contents(self::getKernelPath(), $nw_c)) echo "Generate successfully !";
 					else echo '"' . self::getKernelPath() . '" file write error';
 				}
+				// else echo "Already";
 			}
 			else echo "File \"" . self::getKernelPath() . "\" not exits !";
 		}
