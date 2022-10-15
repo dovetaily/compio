@@ -37,7 +37,7 @@ class ComposerScripts
      */
     public static function postAutoloadDump()
     {
-        if(defined('LARAVEL_START')){
+        if(class_exists(\Illuminate\Foundation\Application::class) && defined('\Illuminate\Foundation\Application::VERSION')){
             L_Laravel::getInstance();
         }
     }
