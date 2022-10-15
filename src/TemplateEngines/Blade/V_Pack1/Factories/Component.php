@@ -124,13 +124,15 @@ class Component{
 	 */
 	public function set_component_name(string $name){
 
-		$f_info_ = pathinfo($name);
+		$f_info_ = array_map(function($v){ return $v == '.' ? '' : $v; }, pathinfo($name));
 		$this->component_name = [
 			'dir_name' => str_replace('/', '\\', $f_info_['dirname']),
 			'namespace' => str_replace('/', '\\', $f_info_['dirname']),
 			'file_name' => $f_info_['filename']
 		];
-		$this->component_name['file_path'] = $this->component_name['dir_name'] . '\\' . $this->component_name['file_name'];
+		$this->component_name['file_path'] = ($this->component_name['dir_name'] != '' ? $this->component_name['dir_name'] . '\\' : '') . $this->component_name['file_name'];
+		// var_dump($this->component_name);
+		// exit();
 
 
 		return $this;
@@ -261,7 +263,7 @@ class Component{
 			$content = file_get_contents($file_path);
 
 			$content = str_replace('@command', '// @command', $content);
-			$content = str_replace('@namespace', $class_->get_component_name('namespace'), $content);
+			$content = $class_->get_component_name('namespace') == '' ? str_replace('\@namespace', null, $content) : str_replace('@namespace', $class_->get_component_name('namespace'), $content);
 			$content = str_replace('@className', $class_->get_component_name('file_name'), $content);
 
 			foreach ($class_->get_paths('component.assets') as $key => $value) {
