@@ -147,6 +147,11 @@ use Illuminate\View\Component;
 class MyComponent extends Component
 {
 
+	/**
+	 * The class assets
+	 *
+	 * @var array
+	 */
 	private $assets = [
 		'css' => [
 			'css/components/MyComponent.css'
@@ -157,17 +162,17 @@ class MyComponent extends Component
 	];
 
 	// properties...
-	public $gg;
+	public $arg_name;
 	
 	/**
 	 * Create a new component instance.
 	 *
 	 * @return void
 	 */
-	public function __construct($gg = "d"){
+	public function __construct(string|int $arg_name = "default_value"){
 
 		// properties...
-		$this->gg = $gg;
+		$this->arg_name = $arg_name;
 		
 	}
 
@@ -180,7 +185,7 @@ class MyComponent extends Component
 	{
 		return view('components.MyComponent', [
 			// properties...
-			'gg' => $this->gg,
+			'arg_name' => $this->arg_name,
 			
 		]);
 	}
