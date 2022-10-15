@@ -7,6 +7,11 @@ use Illuminate\View\Component;
 class @className extends Component
 {
 
+    /**
+     * The class assets
+     *
+     * @var array
+     */
 	private $assets = [
 		'css' => [@locate_css],
 		'js' => [@locate_js],
@@ -38,6 +43,11 @@ class @className extends Component
 		]);
 	}
 
+	/**
+	 * Get the assets of this class
+	 *
+	 * @return array|string
+	 */
 	public static function getAssets(string|null $key = null){
 		return empty($key) ? $this->assets : (array_key_exists($key, $this->assets) ? $this->assets[$key] : false);
 	}
