@@ -15,6 +15,20 @@ abstract class CommandInit{
 	 * @return void
 	 */
 	public static function init(){
+		self::init_command();
+	}
+
+	protected static function path_commands_exist() : string|bool {
+		return file_exists(self::$path_commands) && is_dir(self::$path_commands) ? self::$path_commands : false;
+	}
+
+	public static function getKernelPath(){
+		// $f = function_exists('config') && \config('app.path_console_kernel') ? \config('app.path_console_kernel') : getcwd() . '\app\Console\Kernel.php'; // Dans le cas où le fichier kernel n'est pas trouver
+		$f = getcwd() . '\app\Console\Kernel.php'; // Dans le cas où le fichier kernel n'est pas trouver
+		return $f;
+	}
+
+	public static function init_command(){
 		if($cp = self::path_commands_exist()){
 			if(file_exists(self::getKernelPath()) && is_file(self::getKernelPath())){
 				$file_content = file_get_contents(self::getKernelPath());
@@ -30,16 +44,6 @@ abstract class CommandInit{
 			else echo "File \"" . self::getKernelPath() . "\" not exits !";
 		}
 		else echo "An error is occured ! Re-Instal this package 'compio/compio'";
-	}
-
-	protected static function path_commands_exist() : string|bool {
-		return file_exists(self::$path_commands) && is_dir(self::$path_commands) ? self::$path_commands : false;
-	}
-
-	public static function getKernelPath(){
-		// $f = function_exists('config') && \config('app.path_console_kernel') ? \config('app.path_console_kernel') : getcwd() . '\app\Console\Kernel.php'; // Dans le cas où le fichier kernel n'est pas trouver
-		$f = getcwd() . '\app\Console\Kernel.php'; // Dans le cas où le fichier kernel n'est pas trouver
-		return $f;
 	}
 
 
