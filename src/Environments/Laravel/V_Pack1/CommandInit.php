@@ -16,6 +16,7 @@ abstract class CommandInit{
 	 */
 	public static function init(){
 		self::init_command();
+		self::init_config_model();
 	}
 
 	protected static function path_commands_exist() : string|bool {
@@ -36,8 +37,8 @@ abstract class CommandInit{
 				$nw_c = preg_replace('/(require base_path[(\s]+\'routes\/console\.php\'[);\s]+)/', 'require_once ' . $cp_ . ";\n\t\t$1",$file_content);
 				$pattern = '/(' . str_replace(['\\', '.', '(', ')', "'"], ['\\\\', '\.', '\(', '\)', "\'"], "require_once $cp_") . ')/i';
 				if(((bool) preg_match($pattern, $file_content)) === false){
-					if(file_put_contents(self::getKernelPath(), $nw_c)) echo "Generate successfully !";
-					else echo '"' . self::getKernelPath() . '" file write error';
+					if(file_put_contents(self::getKernelPath(), $nw_c)) echo "Generate successfully !\n";
+					else echo '"' . self::getKernelPath() . "\" file write error\n";
 				}
 				// else echo "Already";
 			}
@@ -46,5 +47,18 @@ abstract class CommandInit{
 		else echo "An error is occured ! Re-Instal this package 'compio/compio'";
 	}
 
+	public static function init_config_model(){
+		$file_config_path = config_path('compio.php');
+		if(!file_exists($file_config_path)){
+			$config_path = dirname($file_config_path);
+			if(file_exists($config_path) || mkdir($config_path, 0777, true)){
+				$model_file = __DIR__ . '\resources\config.php';
+				if(copy($model_file, $file_config_path)) echo "The configuration file `" . $file_config_path . "` has been created !\n";
+				else echo "Error ! Le fichier ne peut être créé !\n";
+			}
+			else echo 'Error ! Directory `' . $config_path . "` is not created ! Create it !\n";
+		}
+		// else echo "Confiration file for compio is already exists !";
+	}
 
 }
