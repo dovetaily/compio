@@ -19,7 +19,7 @@ class Component extends Command
 	private $resources_path = __DIR__ . '\resources\component';
 
 	/**
-	 * The name and signature of the console command.
+	 * The pattern of arguments
 	 *
 	 * @var string
 	 */
