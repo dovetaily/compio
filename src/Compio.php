@@ -4,7 +4,7 @@ namespace Compio;
 
 class Compio
 {
-    const COMPIO_VERSION = '1.0.0';
+    const COMPIO_VERSION = '1.87.5';
     /**
      * Defines the global helper functions
      *
