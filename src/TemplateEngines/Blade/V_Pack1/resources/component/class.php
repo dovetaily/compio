@@ -12,7 +12,7 @@ class @className extends Component
      *
      * @var array
      */
-	private $assets = [
+	private static $assets = [
 		'css' => [@locate_css],
 		'js' => [@locate_js],
 	];
@@ -49,6 +49,6 @@ class @className extends Component
 	 * @return array|string
 	 */
 	public static function getAssets(string|null $key = null){
-		return empty($key) ? $this->assets : (array_key_exists($key, $this->assets) ? $this->assets[$key] : false);
+		return empty($key) ? self::$assets : (array_key_exists($key, self::$assets) ? self::$assets[$key] : false);
 	}
 }
