@@ -47,7 +47,7 @@ $ php artisan compio:component
   Success | Created : "path | C:\Users\...\root_project\public\js\components\ ... .js"
   Success | Created : "path | C:\Users\...\root_project\resources\views\components\ ... MyComponent.blade.php"
   Success | Created : "path | C:\Users\...\root_project\app\View\Components\ ... MyComponent.php"
-  Component created successfully.
+  Component (MyComponent) created successfully.
 ```
 It will generate 4 files :
 #### .\root_project\public\css\components\ ... MyComponent.css
@@ -202,8 +202,7 @@ class MyComponent extends Component
 ```
 And now generated your components !
 
-## Upcoming update !
-Other commands are under development such as : 
+## New update !
 ### 1 - Generate multiple component
 From the data in a configuration file (ex config(path_config.compio.component)), you can generate several components
 ```sheel
@@ -215,13 +214,19 @@ $ php artisan compio:component
   Success | Created : "path | C:\Users\...\root_project\resources\views\components\ ... ComponentName_1.blade.php"
   Success | Created : "path | C:\Users\...\root_project\app\View\Components\ ... ComponentName_1.php"
   ...
-  Component created successfully.
+  Component (ComponentName_1) created successfully.
   ...
   Success | Created : "path | C:\Users\...\root_project\app\View\Components\ ... ComponentName_2.php"
+  Component (ComponentName_2) created successfully.
+  ...
+  Success | Created : "path | C:\Users\...\root_project\app\View\Components\ ... ComponentName_xx.php"
+  Component (ComponentName_xx) created successfully.
   ...
 
 ```
-### 2 - Generate multiple component
+## Upcoming update !
+Other commands are under development such as : 
+### 2 - Choose model to generate
 If a component exists, you can choose wich files will be updated
 ```sheel
 $ php artisan compio:component
@@ -234,7 +239,7 @@ $ php artisan compio:component
   > string:int:arg_name=default_value
   Warning | Modified : "path | C:\Users\...\root_project\public\js\components\ ... .js"
   Warning | Modified : "path | C:\Users\...\root_project\app\View\Components\ ... ComponentName.php"
-  Component created successfully.
+  Component (ComponentName) created successfully.
 $
 $
 $ php artisan compio:component
@@ -247,6 +252,6 @@ $ php artisan compio:component
   >
   Warning | Modified : "path | C:\Users\...\root_project\public\css\components\ ... .css"
   Warning | Modified : "path | C:\Users\...\root_project\resources\views\components\ ... ComponentName.blade.php"
-  Component created successfully.
+  Component (ComponentName) created successfully.
 ```
 Upcoming !
