@@ -353,4 +353,14 @@ class Component{
 	 */
 	public function init_class_render(string|null $name = null){ return empty($this->class_render) ? ($this->class_render = strtolower(str_replace('\\', '-', $name)) . '-' . substr(str_shuffle('abcdefghijklmnopqrstuvwxyz0123456789'), 0, 8)) : $this->class_render; }
 
+
+
+	public static function getInstance(...$args){
+
+		$c = self::class;
+
+		return new $c(...$args);
+
+	}
+
 }
