@@ -146,18 +146,46 @@ class Component extends Command
 			// var_dump($class_::component());
 			// var_dump($component_name, config('compi.component'));
 			$tm_class->set_component_name($component_name);
+			$module_list = [
+				'a' => 'all',
+				'r' => 'render',
+				'c' => 'class',
+				'cs' => 'css',
+				'j' => 'js',
+			];
+			if(!function_exists('compio\environments\laravel\v_pack1\commands\module_w9i22n2e_vrf')){
+				function module_w9i22n2e_vrf($cons, $module_list){
+					$turn = true;
+					while($turn === true){
+						echo " Changer que les fichiers :\n".implode('', array_map(function(string $key, string $val){return "\n\t[" . $key . "] " . $val; }, array_keys($module_list), array_values($module_list))) . "\n\n";
+						$generate__ = explode(',', $cons->ask('Choisissez des options (ex. render, css)', 'a'));
+						$vr = [];
+						foreach ($generate__ as $kk) {
+							if(array_key_exists(trim($kk), $module_list)) $vr[] = $module_list[trim($kk)];
+						}
+						if(empty($vr)) $cons->error($cons->stylize("\t  Veuillez choisir parmi la liste d'option !  ") . "\n");
+						else{
+							if(in_array('all', $vr)) $vr = (function($t){array_shift($t); return $t;})($module_list);
+							$cons->info($cons->stylize("\t  Les options traités seront : " . implode(', ', $vr) . "  \n"));
+							$turn = false;
+						}
+					}
+					return $vr;
+				}
+			}
 			$vrf = true;
 
 			if(($v = $tm_class->verify_component_exist()) !== false){
 				$this->error($this->warn(" Component \"" . $component_name . "\" already exists."));
 				if($this->confirm('Do you want to continue and re-generate component ?', true) === false)
 					$vrf = false;
+				else $module_list = module_w9i22n2e_vrf($this, $module_list);
 			}
 
 			if($vrf){
 				$args = $this->more($this->ask('Put your arguments '), '!##Be_null||', null, $this->argument_pattern, '"');
 				$tm_class->set_component_arguments($args);
-				$this->add_data($component_name, $args, $tm_class, config('compio.component.config'));
+				$this->add_data($component_name, $args, $tm_class, config('compio.component.config'), $module_list);
 			}
 		}
 		else{
@@ -186,6 +214,7 @@ class Component extends Command
 									$this->error($this->warn(" Component \"" . $value['name'] . "\" already exists."));
 									if($this->confirm('Do you want to continue and re-generate component ?', true) === false)
 										$vrf = false;
+									else $module_list = module_w9i22n2e_vrf($this, $module_list);
 								}
 								elseif($value['config']['replace_component_exist'] === true && ($v = $tm_class->verify_component_exist()) !== false) $vrf = true;
 								elseif($value['config']['replace_component_exist'] === false && ($v = $tm_class->verify_component_exist()) !== false) $vrf = false;
@@ -220,7 +249,7 @@ class Component extends Command
 									}
 
 									$components_[strtolower($value['name'])] = $value;
-									$this->add_data($value['name'], $value['args'], $tm_class, $value['config']);
+									$this->add_data($value['name'], $value['args'], $tm_class, $value['config'], $module_list);
 									$this->info($this->stylize("\t" . $key . ' : "' . trim($value['name']) . '" component is loaded !'));
 								}
 								else $this->warn("\t" . $key . ' : "' . trim($value['name']) . "\" component already exists !\n");
@@ -251,12 +280,13 @@ class Component extends Command
 	 * @param  array|null  $config
 	 * @return object
 	 */
-	public function add_data(string $component_name, array|null $args, object $template_class, array|null $config){
+	public function add_data(string $component_name, array|null $args, object $template_class, array|null $config, array $module){
 		$this->datas[] = [
 			'component_name' => $component_name,
 			'args' => $args,
 			'template_class' => $template_class,
-			'config' => $config
+			'config' => $config,
+			'module' => $module
 		];
 		return $this;
 	}
@@ -267,7 +297,7 @@ class Component extends Command
 	 * @param  string  $str
 	 * @return string
 	 */
-	private function stylize(string $str) : string{
+	public function stylize(string $str) : string{
 
 		$s = "";
 		for($i = 0; $i < (strlen($str) - 1); $i++) $s .= " ";
