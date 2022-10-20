@@ -30,7 +30,7 @@ final class Target{
 
 		foreach (scandir(__DIR__) as $value) {
 			if(!in_array($value, $exception)){
-				$c = '\Compio\TemplateEngines\\' . ucfirst($value) . '\\' . ucfirst($value) . 'Inking';
+				$c = '\Compio\TemplateEngines\\' . ucfirst($value) . '\Listen';
 				if (class_exists($c) && ($pack = $c::version_supported()) !== false) {
 					$this->enginesWors[strtolower($value)] = [
 						'class' => $c,

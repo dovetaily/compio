@@ -31,13 +31,14 @@ final class Target{
 		foreach (scandir(__DIR__) as $value) {
 			if(!in_array($value, $exception)){
 				$c = '\Compio\TemplateEngines\\' . ucfirst($value) . '\\' . ucfirst($value) . 'Inking';
-				if (class_exists($c) && ($pack = $c::version_supported()) !== false) {
-					$this->enginesWors[strtolower($value)] = [
+				if (class_exists($c) && ($version = $c::version_supported()) !== false) {
+					$this->enginesWors[strtolower($value)] = ['selected' => false, [
 						'class' => $c,
-						'pack' => '\Compio\TemplateEngines\\' . ucfirst($value) . '\\' . $pack,
-						'pack_path' => __DIR__ . '\\' . $value . '\\' . $pack,
-						'pack_resources_path' => __DIR__ . '\\' . $value . '\\' . $pack . '\resources'
-					];
+						'version' => ['v' => $version['version'], 'space' => '\Compio\TemplateEngines\\' . ucfirst($value) . '\\' . $version['space']],
+						'foundation' => '\Compio\TemplateEngines\\' . ucfirst($value) . '\\' . $version['space'] . '\\' . ucfirst($value) . 'Foundation',
+						'version_path' => __DIR__ . '\\' . $value . '\\' . $version['space'],
+						'version_resources_path' => __DIR__ . '\\' . $value . '\\' . $version['space'] . '\resources'
+					]];
 				}
 			}
 		}

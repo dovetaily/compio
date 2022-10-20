@@ -1,6 +1,6 @@
 <?php
 
-namespace Compio\Environments\Laravel\V_Pack1;
+namespace Compio\Environments\Laravel\V_sup_eq_5_5;
 
 // use Compio\Traits\Singleton;
 
@@ -10,7 +10,7 @@ abstract class CommandInit{
 
 	// use Singleton;
 	/**
-	 * Init class
+	 * Create a new Compio\Environments\Laravel\Liste instance.
 	 *
 	 * @return void
 	 */
@@ -37,14 +37,14 @@ abstract class CommandInit{
 				$nw_c = preg_replace('/(require base_path[(\s]+\'routes\/console\.php\'[);\s]+)/', 'require_once ' . $cp_ . ";\n\t\t$1",$file_content);
 				$pattern = '/(' . str_replace(['\\', '.', '(', ')', "'"], ['\\\\', '\.', '\(', '\)', "\'"], "require_once $cp_") . ')/i';
 				if(((bool) preg_match($pattern, $file_content)) === false){
-					if(file_put_contents(self::getKernelPath(), $nw_c)) echo "Generate successfully !\n";
-					else echo '"' . self::getKernelPath() . "\" file write error\n";
+					if(file_put_contents(self::getKernelPath(), $nw_c)) echo "\nGenerate successfully !\n";
+					else echo "\n\"" . self::getKernelPath() . "\" file write error\n";
 				}
 				// else echo "Already";
 			}
-			else echo "File \"" . self::getKernelPath() . "\" not exits !";
+			else echo "\nFile \"" . self::getKernelPath() . "\" not exits !\n";
 		}
-		else echo "An error is occured ! Re-Instal this package 'compio/compio'";
+		else echo "\nAn error is occured ! Re-Instal this package 'compio/compio'\n";
 	}
 
 	public static function init_config_model(){
@@ -54,9 +54,9 @@ abstract class CommandInit{
 			if(file_exists($config_path) || mkdir($config_path, 0777, true)){
 				$model_file = __DIR__ . '\resources\config.php';
 				if(copy($model_file, $file_config_path)) echo "The configuration file `" . $file_config_path . "` has been created !\n";
-				else echo "Error ! Le fichier ne peut être créé !\n";
+				else echo "\nError ! Le fichier ne peut être créé !\n";
 			}
-			else echo 'Error ! Directory `' . $config_path . "` is not created ! Create it !\n";
+			else echo "\nError ! Directory `" . $config_path . "` is not created ! Create it !\n";
 		}
 		// else echo "Confiration file for compio is already exists !";
 	}

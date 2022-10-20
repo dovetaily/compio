@@ -10,7 +10,7 @@ abstract class CommandInit{
 
 	// use Singleton;
 	/**
-	 * Init class
+	 * Create a new Compio\Environments\Laravel\Liste instance.
 	 *
 	 * @return void
 	 */
@@ -33,7 +33,7 @@ abstract class CommandInit{
 		if($cp = self::path_commands_exist()){
 			if(file_exists(self::getKernelPath()) && is_file(self::getKernelPath())){
 				$file_content = file_get_contents(self::getKernelPath());
-				$cp_ = "getcwd() . '" . (str_replace(getcwd(), null, (dirname($cp) . '\resources\routes.commands.php'))) . "'";
+				$cp_ = "getcwd() . '" . (str_replace(getcwd(), null, (dirname($cp) . '\routes_commands.php'))) . "'";
 				$nw_c = preg_replace('/(require base_path[(\s]+\'routes\/console\.php\'[);\s]+)/', 'require_once ' . $cp_ . ";\n\t\t$1",$file_content);
 				$pattern = '/(' . str_replace(['\\', '.', '(', ')', "'"], ['\\\\', '\.', '\(', '\)', "\'"], "require_once $cp_") . ')/i';
 				if(((bool) preg_match($pattern, $file_content)) === false){
