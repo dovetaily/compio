@@ -175,8 +175,7 @@ class Component extends Command {
 
 		$rp = $template_engine->config()->getMerge('replace_component_exist');
 
-		$vrf = $this->componentExist(
-			(bool) (is_array($rp) 
+		$vrf = $this->componentExist(	(is_array($rp) 
 				? end($rp) 
 				: ((bool) $rp)
 			)
@@ -235,7 +234,7 @@ class Component extends Command {
 
 						$rp = $template_engine->config()->getMerge('replace_component_exist');
 
-						$vrf = $this->componentExist((bool) is_array($rp) 
+						$vrf = $this->componentExist(is_array($rp) 
 							? end($rp) 
 							: ((bool) $rp)
 						, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $value['name'], (bool) $template_engine->config()->getMerge('ask_any_time_generated_model'));
