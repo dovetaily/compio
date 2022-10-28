@@ -17,6 +17,8 @@ return [
 	*/
 	'component' => [
 		'config' => [
+			'ask_any_time_generated_model' => false,
+			'replace_component_exist' => null
 		],
 		'components' => [
 		]

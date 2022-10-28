@@ -176,11 +176,11 @@ class Component extends Command {
 		$rp = $template_engine->config()->getMerge('replace_component_exist');
 
 		$vrf = $this->componentExist(
-			(is_array($rp) 
+			(bool) (is_array($rp) 
 				? end($rp) 
 				: ((bool) $rp)
 			)
-		, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $component_name);
+		, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $component_name, (bool) $template_engine->config()->getMerge('ask_any_time_generated_model'));
 
 		if($vrf['status'] === true){
 
@@ -235,7 +235,10 @@ class Component extends Command {
 
 						$rp = $template_engine->config()->getMerge('replace_component_exist');
 
-						$vrf = $this->componentExist(is_array($rp) ? end($rp) : ((bool) $rp), $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $value['name']);
+						$vrf = $this->componentExist((bool) is_array($rp) 
+							? end($rp) 
+							: ((bool) $rp)
+						, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $value['name'], (bool) $template_engine->config()->getMerge('ask_any_time_generated_model'));
 
 						if($vrf['status'] === true){
 
@@ -408,26 +411,31 @@ class Component extends Command {
 	/**
 	 * Check if component exist
 	 *
-	 * @param  string      $component_name
-	 * @param  array|null  $args
-	 * @param  object      $template_class
-	 * @param  array|null  $config
+	 * @param  bool|null      $replace_component_exist
+	 * @param  bool  $component_exist
+	 * @param  array      $module_list
+	 * @param  string  $component_name
+	 * @param  bool  $already_ask_template
 	 * @return object
 	 */
-	public function componentExist($replace_component_exist, $component_exist, $module_list, $component_name){
+	public function componentExist($replace_component_exist, $component_exist, $module_list, $component_name, $already_ask_template = false){
 
 		$vrf = true;
 
 		$module = array_keys($module_list);
 
-		if($replace_component_exist === null && $component_exist === true){
+		if(($replace_component_exist === null && $component_exist === true) || $already_ask_template === true){
 
-			$this->error($this->warn(" Component \"" . $component_name . "\" already exists."));
+			if($already_ask_template !== true || $component_exist === true){
 
-			if($this->confirm('Do you want to continue and regenerate component ?', true) === false)
-				$vrf = false;
+				$this->error($this->warn(" Component \"" . $component_name . "\" already exists."));
 
-			else $module = (function($cons, $module_list){
+				if($this->confirm('Do you want to continue and regenerate component ?', true) === false)
+					$vrf = false;
+
+			}
+
+			if($vrf === true) $module = (function($cons, $module_list){
 
 				$turn = true;
 

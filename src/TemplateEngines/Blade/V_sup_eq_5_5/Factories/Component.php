@@ -90,6 +90,7 @@ class Component extends ComponentBase {
 					]
 				]
 			],
+			'ask_any_time_generated_model' => false,
 			'replace_component_exist' => null,
 		]);
 	}
