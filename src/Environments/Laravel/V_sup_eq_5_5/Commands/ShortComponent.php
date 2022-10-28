@@ -29,7 +29,7 @@ class ShortComponent extends Component implements CommandInterface {
 	 *
 	 * @var string
 	 */
-	protected $description = 'Advanced component generator Compio(`dovetail/compio`) | Short';
+	protected $description = 'Advanced component generator Compio(`dovetail/compio`) | On line';
 
 	/**
 	 * Execute the console command.

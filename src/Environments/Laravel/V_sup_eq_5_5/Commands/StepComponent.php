@@ -21,7 +21,7 @@ class StepComponent extends Component implements CommandInterface {
 	 *
 	 * @var string
 	 */
-	protected $description = 'Advanced component generator Compio(`dovetail/compio`) | Step by Step';
+	protected $description = 'Advanced component generator Compio(`dovetail/compio`) | Process';
 
 	/**
 	 * Execute the console command.
