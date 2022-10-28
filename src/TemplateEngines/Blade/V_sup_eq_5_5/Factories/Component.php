@@ -276,7 +276,7 @@ class Component extends ComponentBase {
 	 */
 	public function getConsoleCommand($args = null){
 
-		return 'php artisan compio:component ' . $this->name()->getName() . ' ' . $args;
+		return '// php artisan compio:component ' . $this->name()->getName() . ' ' . $args;
 
 	}
 
