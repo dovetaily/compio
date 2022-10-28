@@ -2,7 +2,7 @@
     "name": "dovetaily/compio",
     "type": "library",
     "license": "MIT",
-    "description": "Generator of component - It works temporarily only on Laravel with Artisan(CLI) by generating Blade components and others are in development (like `Twig` `VueJs`, ...)",
+    "description": "Generator of component - It works temporarily only on Laravel with Artisan(CLI) by generating Blade components but you can customize it to generate components from other templating engines like `Twig` or `VueJs` or others.",
     "keywords": ["php", "laravel", "console", "component", "blade", "laravel-blade", "laravel_blade", "artisan", "artisan-blade", "artisan_blade"],
     "autoload": {
         "psr-4": {
