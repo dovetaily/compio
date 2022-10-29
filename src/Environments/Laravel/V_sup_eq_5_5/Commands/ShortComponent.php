@@ -22,7 +22,7 @@ class ShortComponent extends Component implements CommandInterface {
 	 *
 	 * @var string
 	 */
-	protected $signature = 'compio:component {component_name} {args?*}';
+	protected $signature = 'compio:component {component_name?} {args?*}';
 
 	/**
 	 * The console command description.
