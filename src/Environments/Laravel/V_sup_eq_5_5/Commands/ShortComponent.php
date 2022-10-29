@@ -22,7 +22,7 @@ class ShortComponent extends Component implements CommandInterface {
 	 *
 	 * @var string
 	 */
-	protected $signature = 'compio:component {component_name} {args=*null}';
+	protected $signature = 'compio:component {component_name} {args?*}';
 
 	/**
 	 * The console command description.
@@ -63,7 +63,7 @@ class ShortComponent extends Component implements CommandInterface {
 
 		$component_name = ComponentName::nameIsCheck($this->argument('component_name'));
 
-		$arguments = ($val = $this->argument('args')) !== ['null'] ? $val : null;
+		$arguments = ($val = $this->argument('args')) !== [] ? $val : null;
 
 		if($component_name['status'] === false){
 			$this->error($this->stylize("\t  `" . $this->argument('component_name') . "` Is not correct name ! (^[a-z_]+[a-z0-9\/_]+$|^[a-z_]$ -OR- ^\#([a-z]+)\|([^|]+)$)  "));
