@@ -20,11 +20,14 @@ trait Command {
 
 		$args = $this->arguments()->get();
 
-		if(empty($this->command) && !empty($args)){
+		if(empty($this->command)){
 
 			$t = '';
 
-			foreach ($args as $key => $value) {
+			foreach ((!empty($args) 
+				? $args 
+				: []
+			) as $key => $value) {
 
 				$t .= (
 					strpos($key, ' ') === true

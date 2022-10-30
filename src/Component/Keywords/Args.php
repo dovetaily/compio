@@ -134,7 +134,7 @@ trait Args {
 				;
 			});
 
-		}
+		} else $args = empty($args) ? [] : $args;
 
 		$res = "";
 

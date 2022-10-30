@@ -441,7 +441,7 @@ class Component extends Command {
 
 			}
 
-			if($vrf === true) $module = (function($cons, $module_list){
+			if($vrf === true) $module = (function($cons, $module_list, $component_exist, $already_ask_template){
 
 				$turn = true;
 
@@ -465,7 +465,11 @@ class Component extends Command {
 
 						if(in_array('ALL', $vr)) $vr = (function($t){array_shift($t); return $t;})($module_list);
 
-						$cons->info($cons->stylize("\t  These template(s) will be regenerate : " . implode(', ', $vr) . "  \n"));
+						$cons->info($cons->stylize("\t  These template(s) will be " . (
+							$already_ask_template !== true || $component_exist === true 
+								? 're' 
+								: null
+						) . "generate : " . implode(', ', $vr) . "  \n"));
 
 						$turn = false;
 
@@ -475,7 +479,7 @@ class Component extends Command {
 
 				return $vr;
 
-			})($this, array_merge(['ALL'], $module));
+			})($this, array_merge(['ALL'], $module), $component_exist, $already_ask_template);
 
 		}
 		elseif($replace_component_exist === true && $component_exist === true) $vrf = true;
