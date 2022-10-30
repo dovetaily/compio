@@ -8,7 +8,7 @@ use Compio\Environments\Laravel\V_sup_eq_5_5\CommandInterface;
 
 use Illuminate\Console\Command;
 
-class ShortComponent extends Component implements CommandInterface {
+class Component extends Component implements CommandInterface {
 
 	/**
 	 * Closure for verify template engine

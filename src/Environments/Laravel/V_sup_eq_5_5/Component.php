@@ -173,13 +173,17 @@ class Component extends Command {
 		$template_engine->config()->merge();
 		$template_engine->name($component_name);
 
-		$rp = $template_engine->config()->getMerge('replace_component_exist');
+		$rp = [$template_engine->config()->getMerge('replace_component_exist'), $template_engine->config()->getMerge('ask_any_time_generated_model')];
 
-		$vrf = $this->componentExist(	(is_array($rp) 
-				? end($rp) 
-				: ((bool) $rp)
+		$vrf = $this->componentExist(
+			(is_array($rp[0]) 
+				? end($rp[0]) 
+				: $rp[0]
 			)
-		, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $component_name, (bool) $template_engine->config()->getMerge('ask_any_time_generated_model'));
+		, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $component_name, (bool) (is_array($rp[1])
+			? end($rp[1])
+			: $rp[1]
+		));
 
 		if($vrf['status'] === true){
 
@@ -232,12 +236,15 @@ class Component extends Command {
 						$template_engine->config()->merge();
 						$template_engine->name($value['name']);
 
-						$rp = $template_engine->config()->getMerge('replace_component_exist');
+						$rp = [$template_engine->config()->getMerge('replace_component_exist'), $template_engine->config()->getMerge('ask_any_time_generated_model')];
 
-						$vrf = $this->componentExist(is_array($rp) 
-							? end($rp) 
-							: ((bool) $rp)
-						, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $value['name'], (bool) $template_engine->config()->getMerge('ask_any_time_generated_model'));
+						$vrf = $this->componentExist(is_array($rp[0]) 
+							? end($rp[0]) 
+							: ($rp[0])
+						, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $value['name'], (bool) (is_array($rp[1])
+							? end($rp[1])
+							: $rp[1]
+						));
 
 						if($vrf['status'] === true){
 
