@@ -63,7 +63,7 @@ trait Args {
 						: null
 					) . '$' . $param_name . $this->args_params_get_value($value) . ', '
 				;
-				}), ', ')
+				}, true), ', ')
 			) 
 			: $this->args_params
 		;
@@ -112,21 +112,29 @@ trait Args {
 	/**
 	 * Description ...
 	 *
+	 * @param  callable $callback
+	 * @param  bool     $sort
 	 * @return string
 	 */
-	protected function args_($callback){
+	protected function args_(callable $callback, bool $sort = false){
 
 		$args = $this->arguments()->get();
-		$args = array_reverse(is_null($args) ? [] : $args);
-		uasort($args, function ($a, $b) {
-			return is_null($a) && is_null($b) 
-				? -1 
-				: (is_null($a) 
+
+		if($sort){
+
+			$args = array_reverse(is_null($args) ? [] : $args);
+
+			uasort($args, function ($a, $b) {
+				return is_null($a) && is_null($b) 
 					? -1 
-					: 1
-				)
-			;
-		});
+					: (is_null($a) 
+						? -1 
+						: 1
+					)
+				;
+			});
+
+		}
 
 		$res = "";
 
