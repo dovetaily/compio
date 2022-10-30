@@ -3,12 +3,12 @@
 namespace Compio\Environments\Laravel\V_sup_eq_5_5\Commands;
 
 use Compio\Component\Name as ComponentName;
-use Compio\Environments\Laravel\V_sup_eq_5_5\Component;
+use Compio\Environments\Laravel\V_sup_eq_5_5\Component as ComponentFoundation;
 use Compio\Environments\Laravel\V_sup_eq_5_5\CommandInterface;
 
 use Illuminate\Console\Command;
 
-class Component extends Component implements CommandInterface {
+class Component extends ComponentFoundation implements CommandInterface {
 
 	/**
 	 * Closure for verify template engine
@@ -121,7 +121,7 @@ class Component extends Component implements CommandInterface {
 		$template_engine->config()->merge();
 		$template_engine->name($component_name);
 
-		$rp = [$template_engine->config()->getMerge('replace_component_exist'), $template_engine->config()->getMerge('ask_any_time_generated_model')];
+		$rp = [$template_engine->config()->getMerge('replace_component_exist'), $template_engine->config()->getMerge('require_template')];
 
 		$vrf = $this->componentExist(
 			(is_array($rp[0]) 
