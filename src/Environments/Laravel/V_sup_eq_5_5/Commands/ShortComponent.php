@@ -29,7 +29,7 @@ class ShortComponent extends Component implements CommandInterface {
 	 *
 	 * @var string
 	 */
-	protected $description = 'Advanced component generator Compio(`dovetail/compio`) | On line';
+	protected $description = 'Advanced component generator Compio(`dovetail/compio`)';
 
 	/**
 	 * Execute the console command.
@@ -42,7 +42,10 @@ class ShortComponent extends Component implements CommandInterface {
 
 		$c = $this->getTemplateEngineSelected('foundation');
 
-		$this->initDatas($c);
+		if($this->argument('component_name') === null)
+			parent::initDatas($c);
+		else
+			$this->initDatas($c);
 
 		if(!empty($this->datas))
 			foreach ($this->datas as $k => $val_)
@@ -118,14 +121,17 @@ class ShortComponent extends Component implements CommandInterface {
 		$template_engine->config()->merge();
 		$template_engine->name($component_name);
 
-		$rp = $template_engine->config()->getMerge('replace_component_exist');
+		$rp = [$template_engine->config()->getMerge('replace_component_exist'), $template_engine->config()->getMerge('ask_any_time_generated_model')];
 
 		$vrf = $this->componentExist(
-			(is_array($rp) 
-				? end($rp) 
-				: ((bool) $rp)
+			(is_array($rp[0]) 
+				? end($rp[0]) 
+				: ($rp[0])
 			)
-		, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $component_name);
+		, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $component_name, (bool) (is_array($rp[1])
+			? end($rp[1])
+			: $rp[1]
+		));
 
 		if($vrf['status'] === true){
 
