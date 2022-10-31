@@ -90,7 +90,15 @@ class Component extends ComponentFoundation implements CommandInterface {
 				// fusion des arguments du ficher avec celui de la command line
 				$this->check_template_class_with_closure = ['closure' => function($template_engine, $args){
 
-					$resp = array_merge($template_engine->arguments()->get(), $args);
+					$resp = array_merge(
+						(!empty($v = $template_engine->arguments()->get())
+							? $v
+							: []
+						)
+					, (empty($args) || !is_array($args) 
+						? [] 
+						: $args
+					));
 
 					$template_engine->arguments()->set($resp);
 
@@ -146,6 +154,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 			$this->addData($template_engine);
 
 		}
+		else $this->warn($this->stylize("\t \"$component_name\" Component already exists !  "));
 
 
 	}
