@@ -2,6 +2,8 @@
 
 namespace Compio\Component\Keywords;
 
+use Compio\Traits\ArgumentFormat;
+
 trait Args {
 
 	protected $args_construct;
@@ -16,7 +18,7 @@ trait Args {
 
 
 	/**
-	 * Description ...
+	 * Get constructor arguments.
 	 *
 	 * @return string|null
 	 */
@@ -33,7 +35,7 @@ trait Args {
 	}
 
 	/**
-	 * Description ...
+	 * Get init arguments.
 	 *
 	 * @return string|null
 	 */
@@ -50,7 +52,7 @@ trait Args {
 	}
 
 	/**
-	 * Description ...
+	 * Get parmeters arguments.
 	 *
 	 * @return string|null
 	 */
@@ -61,7 +63,7 @@ trait Args {
 				return (!empty($param_type)
 						? $param_type . ' ' 
 						: null
-					) . '$' . $param_name . $this->args_params_get_value($value) . ', '
+					) . '$' . $param_name . ArgumentFormat::format_value($value, $param_type) . ', '
 				;
 				}, true), ', ')
 			) 
@@ -71,30 +73,7 @@ trait Args {
 	}
 
 	/**
-	 * Description ...
-	 *
-	 * @return string|null
-	 */
-	protected function args_params_get_value($value){
-		return $value === null
-			? null
-			: " = " . ($value === '!##Be_null||'
-				? 'null'
-				: ($value == '[]' || $value == '[ ]'
-						? $value
-						: (is_numeric($value)
-								? $value
-								: (is_string($value)
-										? '"' . $value . '"'
-										: var_export($value, true) 
-								)
-						)
-				)
-			);
-	}
-
-	/**
-	 * Description ...
+	 * Get render arguments.
 	 *
 	 * @return string|null
 	 */
@@ -110,7 +89,7 @@ trait Args {
 	}
 
 	/**
-	 * Description ...
+	 * Get argument.
 	 *
 	 * @param  callable $callback
 	 * @param  bool     $sort
@@ -164,41 +143,75 @@ trait Args {
 	}
 
 	/**
-	 * Description ...
+	 * Get custom keyword arguments 
 	 *
 	 * @param string|int   $key
 	 * @param string|null   $select_key
 	 * @return string|null
 	 */
-	protected function args(int $key, string|null $select_key = null){
+	protected function args(string|int $key, string|null $select_key = null){
 
-		$select_key = empty($select_key) ? 'name' : $select_key;
+		$select_key = empty($select_key) ? '{{name}}' : $select_key;
 
 		$args = $this->arguments()->get();
 
-		$separate = explode(':', array_keys($args)[$key]);
+		$args_keys = array_keys($args);
 
-		$param_name = array_pop($separate);
+		$kk = array_key_exists($key, $args_keys)
+			? $key
+			: (is_int(strpos($key, ($d = ',')))
+				? explode($d, $key)
+				: ($key === '*'
+					? array_keys($args_keys)
+					: null
+				)
+			)
+		;
+		$kk = is_string($kk) ? [$kk] : $kk;
 
-		$param_type = empty($separate) ? null : implode('|', $separate);
+		$t = [];
 
-		$param_value = $args[array_keys($args)[$key]];
 
-		$param_value_format = $this->args_params_get_value($param_value);
+		foreach ($kk as $key) {
 
-		$all = $param_type . ' $' . $param_name . $param_value_format;
+			if(array_key_exists($key, $args_keys)){
 
-		$param_selected = [
-			'name' => $param_name,
-			'type' => $param_type,
-			'value' => $param_value,
-			'type-name-value' => $all,
-			'all' => $all,
-			'type-name' => $param_type . ' $' . $param_name . '',
-			'name-value' => '$' . $param_name . $param_value_format,
-		];
+				$separate = explode(':', $args_keys[$key]);
 
-		return array_key_exists($select_key, $param_selected) ? $param_selected[$select_key] : null;
+				$param_name = array_pop($separate);
+
+				$param_type = empty($separate) ? null : implode('|', $separate);
+
+				$param_value = $args[$args_keys[$key]];
+
+				$param_value_format = ArgumentFormat::format_value($param_value, $param_type);
+
+				$all = (is_null($param_type) ? null : $param_type . ' ') . '$' . $param_name . $param_value_format;
+
+				$param_selected = [
+					'{--name--}' => $param_name,
+					'{--type--}' => $param_type,
+					'{--value--}' => $param_value,
+					'{--type-name-value--}' => $all,
+					'{--all--}' => $all,
+					'{--type-name--}' => $param_type . ' $' . $param_name . '',
+					'{--name-value--}' => '$' . $param_name . $param_value_format,
+				];
+
+				$new_v = $select_key;
+
+				foreach ($param_selected as $kkey => $val)
+					$new_v = str_replace($kkey, $val, $new_v);
+
+				$t[] = $new_v;
+
+			}
+
+		}
+
+		$t = !empty($t) ? implode(';', $t) . ';' : null;
+
+		return $t;
 
 	}
 
