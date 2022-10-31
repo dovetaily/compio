@@ -2,6 +2,8 @@
 
 namespace Compio\Component\Keywords;
 
+use Compio\Traits\ArgumentFormat;
+
 trait Command {
 
 	/**
@@ -33,17 +35,7 @@ trait Command {
 					strpos($key, ' ') === true
 						? '"' . $key . '"'
 						: $key
-				) . (
-					is_string($value)
-						? '=' . ($this->arguments()::NULL_VALUE == $value
-							? ''
-							: '"' . $value . '"'
-						)
-						: ($value === null || is_array($value) || is_object($value)
-							? null
-							: '=' . var_export($value, true)
-						)
-				) . ' ';
+				) . str_replace("\n", null, ArgumentFormat::format_value($value, $key, '=')) . ' ';
 
 			}
 
