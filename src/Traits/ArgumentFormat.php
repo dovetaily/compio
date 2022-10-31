@@ -155,4 +155,37 @@ trait ArgumentFormat {
 
 	}
 
+	/**
+	 * Get formated value.
+	 *
+	 * @param  mixed   $value
+	 * @param  string  $type
+	 * @param  string  $equal
+	 * @return mixed
+	 */
+	public static function format_value($value, $type = null, $equal = ' = '){
+		return $value === null
+			? null
+			: $equal . ($value === \Compio\Component\Arguments::NULL_VALUE
+				? 'null'
+				// : ($value == '[]' || $value == '[ ]'
+				: (is_string($value) && preg_match('/^\\[.*\\]/', $value) && preg_match('/^array.*/', $type)
+						? $value
+						: (is_numeric($value)
+								? $value
+								: (is_string($value)
+										? (!empty($type) && preg_match('/^bool.*/', $type) && ($value == 'false' || $value == 'true')
+											? ($value == 'false'
+												? 'false'
+												: 'true'
+											)
+											: '"' . $value . '"'
+										)
+										: var_export($value, true)
+								)
+						)
+				)
+			);
+	}
+
 }
