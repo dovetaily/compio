@@ -154,17 +154,13 @@ class Keyword {
 
 		foreach ($list_id_keyword as $id_keyword => $val) {
 
-			preg_match('/^@([a-z_]+[a-z0-9_]+|[a-z_]+|[a-z_])$/i', $id_keyword, $matches);
+			preg_match('/^@([a-z_]+.*|[a-z_]+|[a-z_])$/i', $id_keyword, $matches);
 
 			$matches = end($matches);
 
 			if($matches !== false){
 
-				if(!is_string($val) && is_callable($val)){ // only a closure function
-					$r = $val($this);
-
-					$t[$id_keyword] = is_string($r) ? $r : null;
-				}
+				if(is_string($val) || is_numeric($val) || is_callable($val)) $t[$id_keyword] = $val;
 				else{
 
 					if(method_exists($this, $matches)){
@@ -172,7 +168,7 @@ class Keyword {
 					}
 					else{
 
-						preg_match('/^args_([0-9]+)_(type|name|value|all|type-name-value|type-name|name-value)$|^args_([0-9]+)$/i', $matches, $match);
+						preg_match('/^args\\[([0-9,]+|[*])\\]\\[(.*)\\]$|^args\\[([0-9,]+)\\]$/i', $matches, $match);
 
 						if($match !== false && !empty($match)) $t[$id_keyword] = $this->args(
 							isset($match[3]) 
@@ -189,7 +185,7 @@ class Keyword {
 				}
 
 			}
-			else echo "Error : Your \"$id_keyword\" keyword is not available ! (^@([a-z_]+[a-z0-9_]+|[a-z_]+|[a-z_])$)";
+			else echo "\n\tError : Your \"$id_keyword\" keyword is not available ! (^@([a-z_]+[a-z0-9_]+|[a-z_]+|[a-z_])$)\n";
 
 		}
 
