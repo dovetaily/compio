@@ -188,7 +188,17 @@ class Component extends ComponentBase {
 							$content = file_get_contents($response_template['file']);
 
 							foreach ($keywords as $key => $value) {
+
+								$value = is_callable($value) && !is_string($value) 
+									? $value(...[$datas, $this->arguments()->get()]) 
+									: (is_string($value) || is_numeric($value) 
+										? $value 
+										: null
+									)
+								;
+
 								$content = str_replace($key, $value, $content);
+
 							}
 
 							file_put_contents($response_template['file'], $content);
