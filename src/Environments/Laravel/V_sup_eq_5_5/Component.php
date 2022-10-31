@@ -430,9 +430,9 @@ class Component extends Command {
 
 		$module = array_keys($module_list);
 
-		if(($replace_component_exist === null && $component_exist === true) || $already_ask_template === true){
+		if(($replace_component_exist === null && $component_exist === true) || ($already_ask_template === true && $replace_component_exist !== false)){
 
-			if($already_ask_template !== true || $component_exist === true){
+			if($already_ask_template !== true || ($component_exist === true && $replace_component_exist === null)){
 
 				$this->error($this->warn(" Component \"" . $component_name . "\" already exists."));
 
