@@ -227,7 +227,7 @@ class Component extends Command {
 						$template_engine = $class_::component();
 						$template_engine->config()->setApp($app_config);
 
-						$value['name'] =  $this->getComponentNameVerify(ComponentName::getPatterns('name'), $value['name']);
+						$value['name'] =  $this->getComponentNameVerify(ComponentName::getPatterns('name'), $this->mergeCharactersDuplicate($value['name']));
 
 
 						if(array_key_exists('config', $value) && is_array($value['config']))
@@ -401,7 +401,7 @@ class Component extends Command {
 
 			if(isset($component_name)) $this->error($this->stylize("\t  \"" . $component_name . "\" Is not correct name ! (^[a-z_]+[a-z0-9\/_]+$|^[a-z_]$ -OR- ^\#([a-z]+)\|([^|]+)$)  "));
 
-			$component_name = trim($this->ask('Component name ? (Component | Path/Component)'));
+			$component_name = $this->mergeCharactersDuplicate(trim($this->ask('Component name ? (Component | Path/Component)')));
 
 			$turn = ComponentName::nameIsCheck($component_name);
 
@@ -532,6 +532,20 @@ class Component extends Command {
 
 		return $this;
 
+	}
+
+	/**
+	 * Get merge characters duplicate
+	 *
+	 * @param  string|null  $value
+	 * @param  string       $pattern
+	 * @return string
+	 */
+	public function mergeCharactersDuplicate(string|null $value, string $pattern = '/([\\/]+|[.]+)/')
+	{
+		return !empty(trim($value)) && is_string($value) ? preg_replace_callback($pattern, function($match){
+			return end($match)[0];
+		}, $value) : $value;
 	}
 
 }

@@ -64,7 +64,9 @@ class Component extends ComponentFoundation implements CommandInterface {
 
 		$app_config = $this->getAppConfig();
 
-		$component_name = ComponentName::nameIsCheck($this->argument('component_name'));
+		$component_name_arg = $this->mergeCharactersDuplicate($this->argument('component_name'));
+
+		$component_name = ComponentName::nameIsCheck($component_name_arg);
 
 		$arguments = ($val = $this->argument('args')) !== [] ? $val : null;
 
@@ -76,7 +78,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 
 		if(empty($component_name['match'])){
 
-			$this->initDatasWithCommand($class_::component(), array_key_exists('name', $component_name) ? $component_name['name'] : $this->argument('component_name'), $arguments, $app_config);
+			$this->initDatasWithCommand($class_::component(), array_key_exists('name', $component_name) ? $component_name['name'] : $component_name_arg, $arguments, $app_config);
 
 		}
 		else{
@@ -102,7 +104,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 
 					$template_engine->arguments()->set($resp);
 
-				}, 'args' => $this->checkComponentsArgs($this->argument('component_name'), $arguments)];
+				}, 'args' => $this->checkComponentsArgs($component_name_arg, $arguments)];
 
 			}
 
