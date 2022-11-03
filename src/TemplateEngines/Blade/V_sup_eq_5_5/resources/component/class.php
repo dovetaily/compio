@@ -35,7 +35,7 @@ class @class_name extends Component
 	/**
 	 * Get the view / contents that represent the component.
 	 *
-	 * @retturn \Illuminate\Contracts\View\View|\Closure|string
+	 * @return \Illuminate\Contracts\View\View|\Closure|string
 	 */
 	public function render()
 	{
@@ -50,7 +50,8 @@ class @class_name extends Component
 	/**
 	 * Get component assets
 	 *
-	 * @retturn array|string
+	 * @param string|null  $key
+	 * @return array|string
 	 */
 	public static function getAssets(string|null $key = null){
 
