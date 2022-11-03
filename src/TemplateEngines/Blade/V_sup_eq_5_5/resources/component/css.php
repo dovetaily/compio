@@ -1,4 +1,4 @@
-.@class{
+.@class_html{
 	/*...*/
 }
 .z-1{ z-index: 1; }
@@ -9,7 +9,7 @@
 /* ---- COLOR START ----  */
 
 	@media (prefers-color-scheme: dark) {
-		.@class{
+		.@class_html{
 			/*...*/
 		}
 	}

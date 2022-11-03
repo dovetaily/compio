@@ -5,7 +5,7 @@ namespace Compio\TemplateEngines\Blade;
 use Compio\Environments\Laravel\LaravelInking;
 use Compio\Traits\Singleton;
 
-class BladeInking extends LaravelInking{
+class BladeInking extends LaravelInking {
 
 	/**
 	 * Create a new Compio\TemplateEngines\Blade\BladeInking instance.

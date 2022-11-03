@@ -1,14 +1,14 @@
 <?php
 @command
-namespace App\View\Components\@namespace;
+namespace App\View\Components@namespace;
 
 use Illuminate\View\Component;
 
-class @className extends Component
+class @class_name extends Component
 {
 
     /**
-     * The class assets
+     * The class assets.
      *
      * @var array
      */
@@ -18,16 +18,18 @@ class @className extends Component
 	];
 
 	// properties...
-	@moreInit
+	@args_init
+
 	/**
 	 * Create a new component instance.
 	 *
 	 * @return void
 	 */
-	public function __construct(@moreParamsarray){
+	public function __construct(@args_params){
 
 		// properties...
-		@moreConst
+		@args_construct
+
 	}
 
 	/**
@@ -37,18 +39,23 @@ class @className extends Component
 	 */
 	public function render()
 	{
+
 		return view('@locate_render', [
 			// properties...
-			@moreRender
+			@args_render
 		]);
+
 	}
 
 	/**
-	 * Get the assets of this class
+	 * Get component assets
 	 *
+	 * @param string|null  $key
 	 * @return array|string
 	 */
 	public static function getAssets(string|null $key = null){
+
 		return empty($key) ? self::$assets : (array_key_exists($key, self::$assets) ? self::$assets[$key] : false);
+
 	}
 }
