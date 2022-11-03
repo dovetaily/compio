@@ -22,7 +22,11 @@ class Component extends ComponentFoundation implements CommandInterface {
 	 *
 	 * @var string
 	 */
-	protected $signature = 'compio:component {component_name?} {args?*}';
+	protected $signature = 'compio:component 
+							{component_name? : Component Name (^[a-z_]+[a-z0-9\/_]+$|^[a-z_]$ or use config ^\#([a-z]+)\|([^|]+)}
+							{args?* : Your arguments for the class (ex. my_arg=default_value my_second_arg my_xx_arg="Hello world")}
+							{--replace= : Replace the component if it exists (\'true\' for replace, ignore with \'false\')}
+							';
 
 	/**
 	 * The console command description.
@@ -37,6 +41,8 @@ class Component extends ComponentFoundation implements CommandInterface {
 	 * @return int
 	 */
 	public function handle(){
+		// dump($this->option('replace'));
+		// exit();
 
 		$this->initTemplateEngine();
 
@@ -109,7 +115,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 			}
 
 
-			if($match[0] == 'config') $this->initDatasWithConfig($match[1], $class_, $app_config);
+			if($match[0] == 'config') $this->initDatasWithConfig($match[1], $class_, $app_config, in_array(trim(($rr = $this->option('replace'))), ['true', 'false']) ? ($rr = $rr == 'true' ? true : false) : null);
 			else $this->error($this->stylize("\t  Alternative `" . $match[0] . "`(" . $str . ") is not supported !  "));
 
 		}
@@ -130,6 +136,19 @@ class Component extends ComponentFoundation implements CommandInterface {
 		$template_engine->config()->setApp($app_config);
 		$template_engine->config()->merge();
 		$template_engine->name($component_name);
+
+		$t = $template_engine->config()->getMerge('replace_component_exist');
+
+		if(in_array(trim(($rr = $this->option('replace'))), ['true', 'false'])){
+
+			$rr = $rr == 'true' ? true : false;
+
+			if(is_array($t)) $t[] = $rr;
+			else $t = [$t, $rr];
+
+		}
+
+		$template_engine->config()->setMerge($t, 'replace_component_exist');
 
 		$rp = [$template_engine->config()->getMerge('replace_component_exist'), $template_engine->config()->getMerge('require_template')];
 

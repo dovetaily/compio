@@ -205,12 +205,13 @@ class Component extends Command {
 	/**
 	 * Initialize the data received by configuration
 	 *
-	 * @param  string  $config_path
-	 * @param  string  $class_
-	 * @param  array   $app_config
+	 * @param  string      $config_path
+	 * @param  string      $class_
+	 * @param  array       $app_config
+	 * @param  bool|null   $replace_option
 	 * @return void
 	 */
-	public function initDatasWithConfig(string $config_path, string $class_, array $app_config = []){
+	public function initDatasWithConfig(string $config_path, string $class_, array $app_config = [], bool|null $replace_option = null){
 
 		$components = config($config_path);
 
@@ -235,6 +236,18 @@ class Component extends Command {
 
 						$template_engine->config()->merge();
 						$template_engine->name($value['name']);
+
+						$t = $template_engine->config()->getMerge('replace_component_exist');
+
+						if(is_bool($replace_option)){
+							if(is_array($t)) $t[] = $replace_option;
+							else $t = [$t, $replace_option];
+						}
+
+						$template_engine->config()->setMerge($t, 'replace_component_exist');
+
+						dump($template_engine->config()->getMerge('replace_component_exist'));
+						exit();
 
 						$rp = [$template_engine->config()->getMerge('replace_component_exist'), $template_engine->config()->getMerge('require_template')];
 
@@ -287,11 +300,12 @@ class Component extends Command {
 	/**
 	 * Get user configuration for library components
 	 *
+	 * @return string  $path
 	 * @return mixed
 	 */
-	public static function getAppConfig(){
+	public static function getAppConfig(string $path = 'compio.component.config'){
 
-		return ($v = config('compio.component.config')) !== null ? $v : [];
+		return function_exists('\config') && ($v = config($path)) !== null ? $v : [];
 
 	}
 
