@@ -61,7 +61,7 @@ class Component extends ComponentBase {
 				'render' => [
 					'path' => getcwd() . '\resources\views\components',
 					'file_extension' => 'blade.php',
-                    'short_path' => 'components',
+					'short_path' => 'components',
 					'template_file' => dirname(__DIR__) . '\resources\component\render.php',
 					'generate' => true,
 					'keywords' => [
@@ -171,7 +171,7 @@ class Component extends ComponentBase {
 					)
 				;
 
-				if(file_exists($template_file)){
+				if(file_exists($template_file) && is_readable($template_file)){
 
 					$creation_response = $this->createTemplate($template_file, $datas['path']);
 					$creation_response = array_key_exists('status_error', $creation_response) 
@@ -210,7 +210,7 @@ class Component extends ComponentBase {
 					$ret = empty($creation_response) ? $ret : $creation_response;
 
 				}
-				else $ret['message'] = "\t  The template file \"" . $datas['template_file'] . '" was not found !  ';
+				else $ret['message'] = "\t  The template file \"" . $datas['template_file'] . '" was not found or is not readable !  ';
 
 			}
 			else $ret['message'] = "\t  The template of the file was not filled require with ! On the key configuration `" . $type . "`. Insert key `template_file => 'model_path'`  ";
