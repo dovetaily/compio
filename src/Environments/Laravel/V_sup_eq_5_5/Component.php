@@ -246,9 +246,6 @@ class Component extends Command {
 
 						$template_engine->config()->setMerge($t, 'replace_component_exist');
 
-						dump($template_engine->config()->getMerge('replace_component_exist'));
-						exit();
-
 						$rp = [$template_engine->config()->getMerge('replace_component_exist'), $template_engine->config()->getMerge('require_template')];
 
 						$vrf = $this->componentExist(is_array($rp[0]) 
