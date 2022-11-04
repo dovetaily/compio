@@ -63,7 +63,7 @@ abstract class Foundation {
 
 				$file_content = file_get_contents($kernel_path);
 
-				$command_path = "getcwd() . '" . (str_replace(getcwd(), null, (dirname($cp) . '\resources\routes.commands.php'))) . "'";
+				$command_path = "getcwd() . '" . (str_replace(getcwd(), '', (dirname($cp) . '\resources\routes.commands.php'))) . "'";
 
 				$new_content = preg_replace('/(require base_path[(\s]+\'routes\/console\.php\'[);\s]+)/', 'require_once ' . $command_path . ";\n\t\t$1",$file_content);
 
