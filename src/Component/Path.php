@@ -32,9 +32,25 @@ class Path {
 		foreach ($this->template()->get() as $key => $value){
 
 			if(array_key_exists('path', $value)){
+
+				if(is_array($value['path'])){
+
+					$user_path = !empty($a = $this->config()->get()) && array_key_exists('template', $a) && array_key_exists($key, $a['template']) && array_key_exists('path', $a['template'][$key]) && $a['template'][$key]['path'] 
+						? $a['template'][$key]['path']
+						: (!empty($a = $this->config()->getApp()) && array_key_exists('template', $a) && array_key_exists($key, $a['template']) && array_key_exists('path', $a['template'][$key]) && $a['template'][$key]['path']
+							? $a['template'][$key]['path']
+							: null
+						)
+					;
+
+					$value['path'] = !empty($user_path) ? $user_path : $value['path'];
+
+				}
+
 				$this->addPath($key, $value['path'], (array_key_exists('file_extension', $value) ? $value['file_extension'] : "php"));
 
 				$this->mergeWithTemplate('path', $key, $this->paths[$key]);
+
 			}
 
 		}
