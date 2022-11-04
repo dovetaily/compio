@@ -1108,14 +1108,21 @@ return [
 			['name' => 'Path/MyComponent',
 				'args' => [ /*...*/ ],
 				'config' => [
-					// required key
-						'path' => string|array, // the storage location of the generated component
-						'template_file' => string, // the template file
-						'generate' => bool, // decide if the template should be generated
-					// not required
-						'keywords' => array, // the keywords to replace in template 
-						'short_path' => string, // path shortcuts to template file or other
-						'file_extension' => string, // the file extension of the generated template (`.php` by default)
+					'template' =>
+					[
+						'class' => [
+							// required key
+								'path' => string|array, // the storage location of the generated component
+								'template_file' => string, // the template file
+								'generate' => bool, // decide if the template should be generated
+							// not required
+								'keywords' => array, // the keywords to replace in template 
+								'short_path' => string, // path shortcuts to template file or other
+								'file_extension' => string, // the file extension of the generated template (`.php` by default)
+						]
+					],
+					'require_template' => true,
+					'replace_component_exist' => false,
 				]
 			],
 			['name' => 'Cards/Post/User',
