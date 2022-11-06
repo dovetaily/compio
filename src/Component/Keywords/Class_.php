@@ -26,7 +26,7 @@ trait Class_ {
 	protected function class_html(){
 
 		return empty($this->class_html)
-			? ($this->class_html = strtolower(
+			? ($this->class_html = 'component-' . strtolower(
 					str_replace('\\', '-', trim($this->name()->getClassName(), '\\')) . '-' . substr(str_shuffle('abcdefghijklmnopqrstuvwxyz0123456789'), 0, 8)
 				)
 			)
