@@ -35,7 +35,11 @@ trait Command {
 					strpos($key, ' ') === true
 						? '"' . $key . '"'
 						: $key
-				) . str_replace("\n", null, ArgumentFormat::format_value($value, $key, '=')) . ' ';
+				) . str_replace("\n", null, (
+					\Compio\Component\Arguments::NULL_VALUE == $value 
+						? '=' 
+						: ArgumentFormat::format_value($value, $key, '=')
+				)) . ' ';
 
 			}
 
