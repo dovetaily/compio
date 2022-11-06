@@ -42,9 +42,10 @@ class Component extends ComponentBase {
 		$this->config()::setDefault([
 			'template' => [
 				'class' => [
-					'path' => getcwd() . '\app\View\Components',
+					'path' => $this->getRootPath() . '\app\View\Components',
 					'template_file' => dirname(__DIR__) . '\resources\component\class.php',
 					'generate' => true,
+					'convert_case' => 'default', // new
 					'keywords' => [
 						'@command',
 						'@namespace',
@@ -59,7 +60,7 @@ class Component extends ComponentBase {
 					]
 				],
 				'render' => [
-					'path' => getcwd() . '\resources\views\components',
+					'path' => $this->getRootPath() . '\resources\views\components',
 					'file_extension' => 'blade.php',
 					'short_path' => 'components',
 					'template_file' => dirname(__DIR__) . '\resources\component\render.php',
@@ -70,7 +71,7 @@ class Component extends ComponentBase {
 					]
 				],
 				'css' => [
-					'path' => getcwd() . '\public\css\components',
+					'path' => $this->getRootPath() . '\public\css\components',
 					'file_extension' => 'css',
 					'short_path' => 'css\components',
 					'template_file' => dirname(__DIR__) . '\resources\component\css.php',
@@ -80,7 +81,7 @@ class Component extends ComponentBase {
 					]
 				],
 				'js' => [
-					'path' => getcwd() . '\public\js\components',
+					'path' => $this->getRootPath() . '\public\js\components',
 					'file_extension' => 'js',
 					'short_path' => 'js\components',
 					'template_file' => dirname(__DIR__) . '\resources\component\js.php',
@@ -288,6 +289,17 @@ class Component extends ComponentBase {
 
 		return '// php artisan compio:component ' . $this->name()->getName() . ' ' . $args;
 
+	}
+
+
+	/**
+	 * Get project root path
+	 *
+	 * @return string
+	 */
+	public function getRootPath()
+	{
+		return getcwd();
 	}
 
 }
