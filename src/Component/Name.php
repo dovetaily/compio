@@ -15,6 +15,7 @@ class Name {
 	 */
 	private static $patterns = [
 		'name' => '/^[a-z_]+[a-z0-9\/_]+$|^[a-z_]$/i',
+		'name_except' => '/\\/[0-9]/i',
 		'config' => '/^\#([a-z]+)\|([^|]+)$/i'
 	];
 
@@ -53,23 +54,22 @@ class Name {
 	 * Check if a component name is correct.
 	 *
 	 * @param  string     $name
+	 * @param  array     $pattern_type
 	 * @return array
 	 */
-	public static function nameIsCheck(string $name) : array {
+	public static function nameIsCheck(string $name, array $pattern_type = ['name', 'config']) : array {
 
 		$name = trim($name);
 
-		if(((bool) preg_match(self::$patterns['name'], $name)) == true)
-			return [
-				'status' => true,
-				'match' => null
-			];
+		foreach ($pattern_type as $value) {
 
-		if(((bool) preg_match(self::$patterns['config'], $name, $match)) == true)
-			return [
-				'status' => true,
-				'match' => $match
-			];
+			if(is_string($value) && array_key_exists($value, self::$patterns) && ((bool) preg_match(self::$patterns[$value], $name, $match)) == true && (($value == 'name' && (((bool) preg_match(self::$patterns['name_except'], $name)) == false)) || $value != 'name'))
+				return [
+					'status' => true,
+					'match' => $value == 'name' ? null : $match
+				];
+
+		}
 
 		return [
 			'status' => false,
