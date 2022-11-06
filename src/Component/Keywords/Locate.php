@@ -46,13 +46,18 @@ trait Locate {
 
 		$tt = $this->template()->get($t);
 
-		if($tt){
+		if(is_array($tt) && !empty($tt)){
+
+			$short = array_key_exists('path', $tt) && !empty($tt['path']) && !empty($cr = current($tt['path'])) && array_key_exists('short', $cr) && ((is_array($cr['short']) && !empty($cr['short']) && is_string($cr = end($cr['short']))) || is_string($cr = $cr['short']))
+				? trim($cr, '\\')
+				: trim($this->name()->getClassName(), '\\')
+			;
 
 			$tt = array_key_exists('short_path', $tt) ? $tt['short_path'] : 'components';
 			$tt = is_array($tt) ? end($tt) : $tt;
 			$tt = trim(trim(str_replace('/', '\\', is_string($tt) ? $tt : 'components')), '\\');
 
-			$res = $tt . '\\' . trim($this->name()->getClassName(), '\\') . ($ext === null 
+			$res = $tt . '\\' . $short . ($ext === null 
 				? '.' . $t
 				: ($ext === 'YE@**@!!@&@T!!'
 					? null
