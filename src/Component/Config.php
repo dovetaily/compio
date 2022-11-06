@@ -137,11 +137,11 @@ class Config {
 	/**
 	 * Set merge configuration.
 	 *
-	 * @param  array        $value
+	 * @param  mixed        $value
 	 * @param  string|null  $key
 	 * @return void
 	 */
-	public function setMerge(array $value, string|null $key = null) {
+	public function setMerge($value, string|null $key = null) {
 
 		$ret = $this;
 
