@@ -211,7 +211,7 @@ class Component extends ComponentBase {
 					$ret = empty($creation_response) ? $ret : $creation_response;
 
 				}
-				else $ret['message'] = "\t  The template file \"" . $datas['template_file'] . '" was not found or is not readable !  ';
+				else $ret['message'] = "\t  The template file \"" . $template_file . '" was not found or is not readable !  ';
 
 			}
 			else $ret['message'] = "\t  The template of the file was not filled require with ! On the key configuration `" . $type . "`. Insert key `template_file => 'model_path'`  ";
