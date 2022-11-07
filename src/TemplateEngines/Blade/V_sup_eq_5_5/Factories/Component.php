@@ -191,7 +191,9 @@ class Component extends ComponentBase {
 							foreach ($keywords as $key => $value) {
 
 								$value = is_callable($value) && !is_string($value) 
-									? $value(...[$datas, $this->arguments()->get()]) 
+									? $value(...[$datas, $this->arguments()->get(), function($value, $type = null, $equal = ' = '){
+										return \Compio\Traits\ArgumentFormat::format_value($value, $type, $equal);
+									}]) 
 									: (is_string($value) || is_numeric($value) 
 										? $value 
 										: null
