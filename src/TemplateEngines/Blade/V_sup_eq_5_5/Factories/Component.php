@@ -99,15 +99,42 @@ class Component extends ComponentBase {
 	/**
 	 * Checks if the component exists.
 	 *
-	 * @return bool
+	 * @return array
 	 */
 	public function componentExists(){
 
-		$p = $this->config()->getMerge('template');
-		$p = is_array($p) && array_key_exists('class', $p) && array_key_exists('path', $p['class']) ? $p['class']['path'] : null;
-		$p = is_array($p) ? end($p) : $p;
+		$p = [];
 
-		return !empty($p) ? file_exists($p . '\\' . $this->name()->getName() . '.php') : false;
+		foreach (array_keys($this->config()->getMerge('template')) as $template) {
+
+			if((!empty($this->config()->get()) && array_key_exists($template, ($rec = $this->config()->get('template'))) && array_key_exists('path', ($rec = $rec[$template]))) || (!empty($this->config()->getApp()) && array_key_exists($template, ($rec = $this->config()->getApp('template'))) && array_key_exists('path', ($rec = $rec[$template]))) || (array_key_exists($template, ($rec = $this->config()->getDefault('template'))) && array_key_exists('path', ($rec = $rec[$template])))){
+
+				$ext = trim(array_key_exists('file_extension', $rec)
+					? (is_array($rec['file_extension']) && !empty($rec['file_extension']) && is_string($e = end($rec['file_extension']))
+						? $e
+						: (is_string($rec['file_extension'])
+							? $rec['file_extension']
+							: 'php'
+						)
+					)
+					: 'php'
+				, '.');
+
+				foreach ((is_array($rec['path'])
+					? $rec['path'] 
+					: [$rec['path']]
+				) as $path) {
+
+					if(is_string($path) && file_exists($file = $path . '\\' . str_replace('/', '\\', $this->name()->getName()) . '.' . $ext))
+						$p[$template] = $file;
+
+				}
+
+			}
+
+		}
+
+		return $p;
 
 	}
 

@@ -441,11 +441,17 @@ class Component extends Command {
 
 		$module = array_keys($module_list);
 
-		if(($replace_component_exist === null && $component_exist === true) || ($already_ask_template === true && $replace_component_exist !== false)){
+		if(($replace_component_exist === null && (!empty($component_exist)) === true) || ($already_ask_template === true && $replace_component_exist !== false)){
 
-			if($already_ask_template !== true || ($component_exist === true && $replace_component_exist === null)){
+			if($already_ask_template !== true || ((!empty($component_exist)) === true && $replace_component_exist === null)){
+				
+				$this->warn(" Component \"" . $component_name . "\" already exists.\n\n File" . (count($component_exist) > 1 
+					? 's' 
+					: ''
+				) . " found :");
 
-				$this->error($this->warn(" Component \"" . $component_name . "\" already exists."));
+				foreach ($component_exist as $template => $file)
+					$this->warn("\n\t Template `" . $template . "` : " . $file);
 
 				if($this->confirm('Do you want to continue and regenerate component ?', true) === false)
 					$vrf = false;
@@ -477,7 +483,7 @@ class Component extends Command {
 						if(in_array('ALL', $vr)) $vr = (function($t){array_shift($t); return $t;})($module_list);
 
 						$cons->info($cons->stylize("\t  These template(s) will be " . (
-							$already_ask_template !== true || $component_exist === true 
+							$already_ask_template !== true || (!empty($component_exist)) === true 
 								? 're' 
 								: null
 						) . "generate : " . implode(', ', $vr) . "  \n"));
@@ -490,17 +496,17 @@ class Component extends Command {
 
 				return $vr;
 
-			})($this, array_merge(['ALL'], $module), $component_exist, $already_ask_template);
+			})($this, array_merge(['ALL'], $module), (!empty($component_exist)), $already_ask_template);
 
 		}
-		elseif($replace_component_exist === true && $component_exist === true) $vrf = true;
-		elseif($replace_component_exist === false && $component_exist === true) {
+		elseif($replace_component_exist === true && (!empty($component_exist)) === true) $vrf = true;
+		elseif($replace_component_exist === false && (!empty($component_exist)) === true) {
 			$vrf = false;
 
 			$module = [];
 		}
 
-		if(!$component_exist){
+		if(!(!empty($component_exist))){
 
 			$config_template_to_generate = array_map(
 				function($v){
