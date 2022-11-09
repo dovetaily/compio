@@ -45,7 +45,7 @@ class Component extends ComponentBase {
 					'path' => $this->getRootPath() . '\app\View\Components',
 					'template_file' => dirname(__DIR__) . '\resources\component\class.php',
 					'generate' => true,
-					'convert_case' => 'default', // new
+					'convert_case' => 'uf',
 					'keywords' => [
 						'@command',
 						'@namespace',
@@ -107,7 +107,10 @@ class Component extends ComponentBase {
 
 		foreach (array_keys($this->config()->getMerge('template')) as $template) {
 
-			if((!empty($this->config()->get()) && array_key_exists($template, ($rec = $this->config()->get('template'))) && array_key_exists('path', ($rec = $rec[$template]))) || (!empty($this->config()->getApp()) && array_key_exists($template, ($rec = $this->config()->getApp('template'))) && array_key_exists('path', ($rec = $rec[$template]))) || (array_key_exists($template, ($rec = $this->config()->getDefault('template'))) && array_key_exists('path', ($rec = $rec[$template])))){
+			if((!empty($this->config()->get()) && array_key_exists($template, ($rec = $this->config()->get('template'))) && array_key_exists('path', ($rec = $rec[$template]))) || (!empty($this->config()->getApp()) && array_key_exists($template, (($rec = $this->config()->getApp('template')) === false 
+					? [] 
+					: $rec
+			)) && array_key_exists('path', ($rec = $rec[$template]))) || (array_key_exists($template, ($rec = $this->config()->getDefault('template'))) && array_key_exists('path', ($rec = $rec[$template])))){
 
 				$ext = trim(array_key_exists('file_extension', $rec)
 					? (is_array($rec['file_extension']) && !empty($rec['file_extension']) && is_string($e = end($rec['file_extension']))
