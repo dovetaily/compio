@@ -556,13 +556,14 @@ class Component extends Command {
 	 *
 	 * @param  string|null  $value
 	 * @param  string       $pattern
+	 * @param  string       $trim
 	 * @return string
 	 */
-	public function mergeCharactersDuplicate(string|null $value, string $pattern = '/([\\/]+|[.]+)/')
+	public function mergeCharactersDuplicate(string|null $value, string $pattern = '/([\\/]+|[.]+)/', string $trim = '/')
 	{
-		return !empty(trim($value)) && is_string($value) ? preg_replace_callback($pattern, function($match){
+		return trim((!empty(trim($value)) && is_string($value) ? preg_replace_callback($pattern, function($match){
 			return end($match)[0];
-		}, $value) : $value;
+		}, $value) : $value), $trim);
 	}
 
 }
