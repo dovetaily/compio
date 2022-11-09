@@ -648,6 +648,7 @@ return [
 					'path' => getcwd() . '\app\View\Components',
 					'template_file' => dirname(__DIR__) . '\resources\component\class.php',
 					'generate' => true,
+					'convert_case' => 'default',
 					'keywords' => [
 						'@command',
 						'@namespace',
@@ -669,6 +670,7 @@ return [
 - The key `path` (type `string|array`) : this is the folder where the generated files will be stored.
 - The key `template_file` (type `string`) : this is the template file to generate components (it can be a .txt, .php,... or other file). And the function `dirname(__DIR__)` is in the <b>Compio</b> class.
 - The key `generate` (type `bool`) : if it is `false`, the template will not be generated and if it is `true` it will be the opposite.
+- The key `convert_case` (type `string|callable`) : convert the short path name of your component name(default value `lower`).
 - The key `keywords` (type `array`): these are the keywords found in the template file (you will see their usefulness in the template file).
 
 Here's how the default template file(`template_file`) looks like :
