@@ -20,7 +20,7 @@ return [
 			'require_template' => false,
 			'replace_component_exist' => null
 		],
-		'components' => [
+		'datas' => [
 		]
 	]
 ];
