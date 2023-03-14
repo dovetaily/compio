@@ -9,7 +9,7 @@ class Compio {
      *
      * @var string
      */
-	const COMPIO_VERSION = '1.87.5';
+	const COMPIO_VERSION = '2.0';
 
 	/**
 	 * Defines the global helper functions
