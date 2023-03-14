@@ -160,7 +160,12 @@ class Keyword {
 
 			if($matches !== false){
 
-				if(is_string($val) || is_numeric($val) || is_callable($val)) $t[$id_keyword] = $val;
+				if(is_string($val) || is_numeric($val) || is_callable($val)){
+					$t[$id_keyword] = is_callable($val) && !is_string($val) 
+						? ['callable' => $val, 'default_value' => $this->generate($keyword_type, [$id_keyword => null])]
+						: $val
+					;
+				}
 				else{
 
 					if(method_exists($this, $matches)){

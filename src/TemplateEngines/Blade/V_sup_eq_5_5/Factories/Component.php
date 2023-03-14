@@ -220,13 +220,21 @@ class Component extends ComponentBase {
 
 							foreach ($keywords as $key => $value) {
 
-								$value = is_callable($value) && !is_string($value) 
-									? $value(...[$datas, (empty($a = $this->arguments()->get())
-										? []
-										: $a
-									), function($value, $type = null, $equal = ' = '){
-										return \Compio\Traits\ArgumentFormat::format_value($value, $type, $equal);
-									}]) 
+								$value = is_array($value) && array_key_exists('callable', $value)
+									? $value['callable'](...[
+										(array_key_exists('default_value', $value) && (is_numeric($value['default_value']) || is_string($value['default_value']))
+											? $value['default_value']
+											: null
+										),
+										$datas,
+										(!empty($a = $this->arguments()->get())
+											? $a
+											: []
+										),
+										function($value, $type = null, $equal = ' = '){
+											return \Compio\Traits\ArgumentFormat::format_value($value, $type, $equal);
+										}
+									])
 									: (is_string($value) || is_numeric($value) 
 										? $value 
 										: null
