@@ -189,7 +189,7 @@ class Component extends Command {
 
 			$template_to_generate = $vrf['template'];
 
-			$template_engine->template()->templateToGenerate($template_to_generate);
+			// $this->compliant_verif($template_engine->template()->templateToGenerate($template_to_generate));
 
 			$args = $this->ask('Put your arguments ');
 
@@ -231,8 +231,14 @@ class Component extends Command {
 						$value['name'] =  $this->getComponentNameVerify(ComponentName::getPatterns('name'), $this->mergeCharactersDuplicate($value['name']));
 
 
-						if(array_key_exists('config', $value) && is_array($value['config']))
-							$template_engine->config()->set($value['config']);
+						
+						if(
+							array_key_exists('config', $value) && (
+								is_array($value['config']) || (
+									is_callable($value['config']) && is_array( $value['config'] = $value['config']() )
+								)
+							)
+						) $template_engine->config()->set($value['config']);
 
 						$template_engine->config()->merge();
 						$template_engine->name($value['name']);
@@ -258,7 +264,7 @@ class Component extends Command {
 
 						if($vrf['status'] === true){
 
-							$template_engine->template()->templateToGenerate($vrf['template']);
+							// $this->compliant_verif($template_engine->template()->templateToGenerate($vrf['template']));
 
 							$value['args'] = $this->checkConfigComponentsArgs($value['name'], array_key_exists('args', $value) 
 								? $value['args']
@@ -564,6 +570,13 @@ class Component extends Command {
 		return trim((!empty(trim($value)) && is_string($value) ? preg_replace_callback($pattern, function($match){
 			return end($match)[0];
 		}, $value) : $value), $trim);
+	}
+
+	public function compliant_verif(bool|array $value){
+		$this->error('lorem');
+		dump($value);
+		exit('ss');
+
 	}
 
 }
