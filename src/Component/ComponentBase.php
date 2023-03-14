@@ -80,7 +80,7 @@ class ComponentBase {
 	 * @param  string|null  $key
 	 * @return array|object|bool
 	 */
-	public function getDatas(string|null $key = null) {
+	public function getDatas($key = null) {
 
 		return $key === null ? $this->datas : (array_key_exists($key, $this->datas) ? $this->datas[$key] : false);
 

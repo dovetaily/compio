@@ -9,6 +9,6 @@ interface InkingInterface {
      *
      * @return string|bool
      */
-    public static function version() : string|bool;
+    public static function version();
 
 }

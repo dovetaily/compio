@@ -54,7 +54,7 @@ class Config {
 	 * @param  string|null  $key
 	 * @return mixed
 	 */
-	public static function getDefault(string|null $key = null) {
+	public static function getDefault($key = null) {
 
 		return $key === null ? self::$default : (array_key_exists($key, self::$default) ? self::$default[$key] : false);
 
@@ -78,7 +78,7 @@ class Config {
 	 * @param  string|null  $key
 	 * @return mixed
 	 */
-	public function get(string|null $key = null) {
+	public function get($key = null) {
 
 		return $key === null ? $this->current : (array_key_exists($key, $this->current) ? $this->current[$key] : false);
 
@@ -104,7 +104,7 @@ class Config {
 	 * @param  string|null  $key
 	 * @return mixed
 	 */
-	public static function getApp(string|null $key = null) {
+	public static function getApp($key = null) {
 
 		return $key === null ? self::$app : (array_key_exists($key, self::$app) ? self::$app[$key] : false);
 
@@ -128,7 +128,7 @@ class Config {
 	 * @param  string|null  $key
 	 * @return mixed
 	 */
-	public function getMerge(string|null $key = null) {
+	public function getMerge($key = null) {
 
 		return $key === null ? $this->merge_conf : (array_key_exists($key, $this->merge_conf) ? $this->merge_conf[$key] : false);
 
@@ -141,7 +141,7 @@ class Config {
 	 * @param  string|null  $key
 	 * @return void
 	 */
-	public function setMerge($value, string|null $key = null) {
+	public function setMerge($value, $key = null) {
 
 		$ret = $this;
 

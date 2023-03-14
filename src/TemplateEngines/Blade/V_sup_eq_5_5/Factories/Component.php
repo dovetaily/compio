@@ -179,7 +179,7 @@ class Component extends ComponentBase {
 	 * @return array|null  $datas
 	 * @return array
 	 */
-	public function generate(string $type, array|null $datas){
+	public function generate(string $type, $datas){
 
 		$ret = [
 			'status_error' => true,
@@ -272,7 +272,7 @@ class Component extends ComponentBase {
 	 * @return array|null  $copy_template_here
 	 * @return array
 	 */
-	public function createTemplate(string $template_file, array|string $copy_template_here){
+	public function createTemplate(string $template_file, $copy_template_here){
 
 		$copy_template_here = is_array($copy_template_here) ? $copy_template_here : [$copy_template_here];
 

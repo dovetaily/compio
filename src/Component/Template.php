@@ -148,7 +148,7 @@ class Template {
 	 * @param  string|null  $key
 	 * @return mixed
 	 */
-	public function get(string|null $key = null) {
+	public function get($key = null) {
 
 		return $key === null ? $this->templates : (array_key_exists($key, $this->templates) ? $this->templates[$key] : false);
 
@@ -161,7 +161,7 @@ class Template {
 	 * @param  string|null  $key
 	 * @return Compio\Component\Template|bool
 	 */
-	public function set($value = null, string|null $key = null) {
+	public function set($value = null, $key = null) {
 
 		if(empty($key)) $this->templates = $value;
 		elseif(array_key_exists($key, $this->templates)) $this->templates[$key] = $value;

@@ -28,7 +28,7 @@ abstract class Inking {
 	 *
 	 * @return array|bool
 	 */
-	public static function version_supported() : array|bool {
+	public static function version_supported() {
 
 		foreach (static::$version_supported as $space => $version) {
 

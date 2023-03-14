@@ -89,7 +89,7 @@ class Path {
 	 * @param  string|null  $key
 	 * @return mixed
 	 */
-	public function get(string|null $key = null) {
+	public function get($key = null) {
 
 		return $key === null ? $this->paths : (array_key_exists($key, $this->paths) ? $this->paths[$key] : false);
 
@@ -104,7 +104,7 @@ class Path {
 	 * @param  string|callable    $convert_case
 	 * @return Compio\Component\Path
 	 */
-	public function addPath(string $template, array|string|null $value, string $ext, string|callable $convert_case = 'lower'){
+	public function addPath(string $template, $value, string $ext, $convert_case = 'lower'){
 
 		$value = is_array($value) ? $value : [$value];
 

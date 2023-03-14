@@ -29,7 +29,7 @@ final class Target {
      * @param  bool        $new_
 	 * @return array
 	 */
-	public function getEnginesWorks(array|null $exception = null, bool $new_ = true) : array{
+	public function getEnginesWorks($exception = null, bool $new_ = true) : array{
 
 		if(!$new_ && !empty($this->enginesWors)) return $this->enginesWors;
 

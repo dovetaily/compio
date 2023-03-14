@@ -131,7 +131,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 	 * @param  array              $app_config
 	 * @return void
 	 */
-	public function initDatasWithCommand(object $template_engine, string $component_name, array|string|null $arguments, array $app_config = []){
+	public function initDatasWithCommand(object $template_engine, string $component_name, $arguments, array $app_config = []){
 
 		$template_engine->config()->setApp($app_config);
 		$template_engine->config()->merge();
@@ -166,7 +166,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 
 			$template_to_generate = $vrf['template'];
 
-			$template_engine->template()->templateToGenerate($template_to_generate);
+			// $this->compliant_verif($template_engine->template()->templateToGenerate($template_to_generate));
 
 			$args = $this->checkComponentsArgs($component_name, $arguments);
 
@@ -187,7 +187,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 	 * @param  array|string|null  $arguments
 	 * @return array|string|null
 	 */
-	public function checkComponentsArgs(string $component_name, array|string|null $arguments = null){
+	public function checkComponentsArgs(string $component_name, $arguments = null){
 
 		return $this->checkConfigComponentsArgs($component_name, $arguments, function($name, $value){
 

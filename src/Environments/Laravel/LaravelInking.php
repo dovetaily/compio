@@ -39,7 +39,7 @@ class LaravelInking extends Inking implements InkingInterface {
 	 *
 	 * @return string|bool
 	 */
-	public static function version() : string|bool {
+	public static function version() {
 
 		return class_exists(\Illuminate\Foundation\Application::class) && defined('\Illuminate\Foundation\Application::VERSION') ? \Illuminate\Foundation\Application::VERSION : false;
 

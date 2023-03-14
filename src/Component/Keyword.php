@@ -66,7 +66,7 @@ class Keyword {
 	 * @param Compio\Component\Template|null  $template
 	 * @return void
 	 */
-	public function __construct(Template|null $template = null){
+	public function __construct($template = null){
 
 		if(!is_null($template)) $this->init($template);
 
@@ -119,7 +119,7 @@ class Keyword {
 	 * @param  string|null  $key
 	 * @return array|object|bool
 	 */
-	public function getKeyword(string|null $key = null) {
+	public function getKeyword($key = null) {
 
 		return $key === null ? $this->keywords : (array_key_exists($key, $this->keywords) ? $this->keywords[$key] : false);
 

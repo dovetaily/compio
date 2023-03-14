@@ -29,7 +29,7 @@ abstract class Foundation {
 	 *
 	 * @return void
 	 */
-	protected static function command_path_exist() : string|bool {
+	protected static function command_path_exist() {
 
 		return file_exists(self::$command_path) && is_dir(self::$command_path) ? self::$command_path : false;
 

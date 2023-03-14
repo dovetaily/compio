@@ -10,7 +10,7 @@ trait Compliant {
 	 * @param  array  $templates
 	 * @return bool|array
 	 */
-	public static function is_compliant($template, $value, $keys_structure) : bool|array{
+	public static function is_compliant($template, $value, $keys_structure) {
 
 		$error = [];
 
@@ -50,7 +50,7 @@ trait Compliant {
 	 * @param  bool                  $empty
 	 * @return string|bool
 	 */
-	private static function is_conforming($datas, string $key, string|callable|null $verif = null, bool $last = true, bool $empty = false) : string|bool{
+	private static function is_conforming($datas, string $key, $verif = null, bool $last = true, bool $empty = false) {
 
 		$verif = is_string($verif) && function_exists('\\' . $verif) 
 			? $verif 

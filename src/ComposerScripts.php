@@ -11,7 +11,7 @@ class ComposerScripts {
 	 * @param  \Composer\Script\Event|null  $event
 	 * @return void
 	 */
-	public static function postAutoloadDump(Event|null $event = null){
+	public static function postAutoloadDump($event = null){
 
 		if(class_exists(\Illuminate\Foundation\Application::class) && defined('\Illuminate\Foundation\Application::VERSION')){
 			\Compio\Environments\Laravel\LaravelInking::getInstance();

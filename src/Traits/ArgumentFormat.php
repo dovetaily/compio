@@ -22,7 +22,7 @@ trait ArgumentFormat {
 	 * @param  string               $strophe
 	 * @return array|null
 	 */
-	public static function format_args(string|null $more, bool|null|string $be_null = false, callable|null|array $Closure = null, array|null $pattern = null, string $strophe = "'") : array|null {
+	public static function format_args($more, $be_null = false, $Closure = null, $pattern = null, string $strophe = "'") {
 
 		$pattern = is_null($pattern) ? self::$default_pattern : $pattern;
 
@@ -130,7 +130,7 @@ trait ArgumentFormat {
 	 * @param  string            $strophe
 	 * @return mixed
 	 */
-	public static function type_verif(string $pattern, string $value, bool|string|null $be_null, string $strophe){
+	public static function type_verif(string $pattern, string $value, $be_null, string $strophe){
 
 		return preg_match($pattern, $value)
 			? trim($value, $strophe)

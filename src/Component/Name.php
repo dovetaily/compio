@@ -44,7 +44,7 @@ class Name {
 	 * @param  string|null       $key
 	 * @return array|string|bool
 	 */
-	public static function getPatterns(string|null $key = null) : array|string|bool {
+	public static function getPatterns($key = null) {
 
 		return $key === null ? self::$patterns : (array_key_exists($key, self::$patterns) ? self::$patterns[$key] : false);
 
@@ -109,7 +109,7 @@ class Name {
 	 * @param  string|null  $sep
 	 * @return string
 	 */
-	public function getClassName(string|null $sep = '\\'){
+	public function getClassName($sep = '\\'){
 
 		preg_match('/.*[\/\\\]([a-z0-9_]+)$/i', $this->name()->getName(), $m);
 

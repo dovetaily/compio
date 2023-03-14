@@ -120,7 +120,7 @@ class Component extends Command {
 	 * @param string|null       $key
 	 * @return mixed
 	 */
-	public function getTemplateEngineSelected($key = null) : array|bool|string {
+	public function getTemplateEngineSelected($key = null) {
 
 		return empty($key) ? $template_engine_selected : (array_key_exists('datas', $this->template_engine_selected) && array_key_exists($key, $this->template_engine_selected['datas']) 
 			? $this->template_engine_selected['datas'][$key]
@@ -211,7 +211,7 @@ class Component extends Command {
 	 * @param  bool|null   $replace_option
 	 * @return void
 	 */
-	public function initDatasWithConfig(string $config_path, string $class_, array $app_config = [], bool|null $replace_option = null){
+	public function initDatasWithConfig(string $config_path, string $class_, array $app_config = [], $replace_option = null){
 
 		$components = config($config_path);
 
@@ -320,7 +320,7 @@ class Component extends Command {
 	 * @param  closure            $Closure
 	 * @return array|string|null
 	 */
-	public function checkConfigComponentsArgs(string $component_name, array|string|null $arguments = null, callable|null $Closure = null){
+	public function checkConfigComponentsArgs(string $component_name, $arguments = null, $Closure = null){
 
 		if(is_array($arguments) && !empty($arguments)){
 
@@ -565,18 +565,18 @@ class Component extends Command {
 	 * @param  string       $trim
 	 * @return string
 	 */
-	public function mergeCharactersDuplicate(string|null $value, string $pattern = '/([\\/]+|[.]+)/', string $trim = '/')
+	public function mergeCharactersDuplicate($value, string $pattern = '/([\\/]+|[.]+)/', string $trim = '/')
 	{
 		return trim((!empty(trim($value)) && is_string($value) ? preg_replace_callback($pattern, function($match){
 			return end($match)[0];
 		}, $value) : $value), $trim);
 	}
 
-	public function compliant_verif(bool|array $value){
-		$this->error('lorem');
-		dump($value);
-		exit('ss');
+	// public function compliant_verif($value){
+	// 	$this->error('lorem');
+	// 	dump($value);
+	// 	exit('ss');
 
-	}
+	// }
 
 }

@@ -43,7 +43,7 @@ class Arguments{
 	 * @param  string|array|null  $args
 	 * @return void
 	 */
-	public function __construct(string|array|null $args = null){
+	public function __construct($args = null){
 
 		$this->set($args);
 
@@ -55,7 +55,7 @@ class Arguments{
 	 * @param  string|null  $key
 	 * @return mixed
 	 */
-	public function get(string|null $key = null) {
+	public function get($key = null) {
 
 		return $key === null ? $this->args : (array_key_exists($key, $this->args) ? $this->args[$key] : false);
 
@@ -67,7 +67,7 @@ class Arguments{
 	 * @param  string|array|null  $args
 	 * @return object
 	 */
-	public function set(string|array|null $args = null) {
+	public function set($args = null) {
 
 		$this->args = is_string($args) || is_null($args) ? $this->format_args(trim($args), self::NULL_VALUE, null, $this->argument_pattern, '"') : $args;
 

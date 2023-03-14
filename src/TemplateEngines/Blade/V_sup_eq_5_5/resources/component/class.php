@@ -53,7 +53,7 @@ class @class_name extends Component
 	 * @param string|null  $key
 	 * @return array|string
 	 */
-	public static function getAssets(string|null $key = null){
+	public static function getAssets($key = null){
 
 		return empty($key) ? self::$assets : (array_key_exists($key, self::$assets) ? self::$assets[$key] : false);
 

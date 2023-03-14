@@ -149,7 +149,7 @@ trait Args {
 	 * @param string|null   $select_key
 	 * @return string|null
 	 */
-	protected function args(string|int $key, string|null $select_key = null){
+	protected function args($key, $select_key = null){
 
 		$select_key = empty($select_key) ? '{{name}}' : $select_key;
 

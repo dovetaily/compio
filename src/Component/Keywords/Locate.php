@@ -40,9 +40,12 @@ trait Locate {
 	/**
 	 * Get locate_ format keyword.
 	 *
+	 * @param  string    $t
+	 * @param  string    $ext
+	 * @param  callable  $callback
 	 * @return string|null
 	 */
-	protected function locate_($t, $ext = null, callable|null $callback = null){
+	protected function locate_($t, $ext = null, $callback = null){
 
 		$tt = $this->template()->get($t);
 
