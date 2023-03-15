@@ -60,14 +60,11 @@ class Path {
 				;
 
 				$convert_case = array_key_exists('convert_case', $value) 
-					? (is_array($v = $value['convert_case']) && !empty($v) && is_string($v = end($v)) && !empty(trim($v))
-						? trim($v)
-						: (is_string($value['convert_case']) && !empty(trim($value['convert_case']))
-							? trim($value['convert_case'])
-							: (is_callable($value['convert_case'])
-								? $value['convert_case']
-								: 'lower'
-							)
+					? (is_string($value['convert_case']) && !empty(trim($value['convert_case']))
+						? trim($value['convert_case'])
+						: (is_callable($value['convert_case']) || is_array($value['convert_case'])
+							? $value['convert_case']
+							: 'lower'
 						)
 					)
 					: 'lower'
@@ -89,7 +86,7 @@ class Path {
 	 * @param  string|null  $key
 	 * @return mixed
 	 */
-	public function get($key = null) {
+	public function get(string|null $key = null) {
 
 		return $key === null ? $this->paths : (array_key_exists($key, $this->paths) ? $this->paths[$key] : false);
 
@@ -131,8 +128,8 @@ class Path {
 	/**
 	 * Get converted text according to a component's criteria
 	 * 
-	 * @param string          $value
-	 * @param string|callable  $type
+	 * @param string                 $value
+	 * @param string|callable|array  $type
 	 * @return string
 	*/
 	public function convert_case($value, $type){
@@ -148,6 +145,16 @@ class Path {
 			;
 
 		}
+		elseif(is_array($type)){
+
+			$ret = $value;
+
+			foreach ($type as $type_)
+				if(is_string($type_) || is_callable($type_)) $ret = $this->convert_case($ret, $type_);
+
+			return $ret;
+
+		}
 
 		return is_string($type) 
 			? ($type == 'default' || $type == 'd'
@@ -158,7 +165,16 @@ class Path {
 						? preg_replace_callback('/\\\([^ ])/i', function($_1){return strtoupper(current($_1));}, ucfirst($value))
 						: ($type == 'lcfirst' || $type == 'lc_first' || $type == 'lf'
 							? preg_replace_callback('/\\\([^ ])/i', function($_1){return strtolower(current($_1));}, lcfirst($value))
-							: strtolower($value)
+							: (($type == 'camel' || $type == 'kebab' || $type == 'snake' || $type == 'studly') && is_callable('Str::' . $type)
+								? (function($t, $v){
+									preg_match('/(.*\\\)(.*)$/', $v, $match);
+									array_shift($match);
+									$match[count($match) - 1] = call_user_func('Str::' . $t, $match[count($match) - 1]);
+									return implode('', $match);
+									})
+								($type, $value)
+								: strtolower($value)
+							)
 						)
 					)
 				)
