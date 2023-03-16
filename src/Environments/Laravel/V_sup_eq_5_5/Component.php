@@ -189,6 +189,7 @@ class Component extends Command {
 
 			$template_to_generate = $vrf['template'];
 
+			$template_engine->template()->templateToGenerate($template_to_generate);
 			// $this->compliant_verif($template_engine->template()->templateToGenerate($template_to_generate));
 
 			$args = $this->ask('Put your arguments ');
@@ -264,6 +265,7 @@ class Component extends Command {
 
 						if($vrf['status'] === true){
 
+							$template_engine->template()->templateToGenerate($vrf['template']);
 							// $this->compliant_verif($template_engine->template()->templateToGenerate($vrf['template']));
 
 							$value['args'] = $this->checkConfigComponentsArgs($value['name'], array_key_exists('args', $value) 

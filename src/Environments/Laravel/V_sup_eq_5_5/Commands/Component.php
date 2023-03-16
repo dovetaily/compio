@@ -41,8 +41,6 @@ class Component extends ComponentFoundation implements CommandInterface {
 	 * @return int
 	 */
 	public function handle(){
-		// dump($this->option('replace'));
-		// exit();
 
 		$this->initTemplateEngine();
 
@@ -57,7 +55,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 			foreach ($this->datas as $k => $val_)
 				$this->generate($val_);
 
-		return Command::SUCCESS;
+		return defined('\\' . Command::class . '::SUCCESS') ? Command::SUCCESS : true;
 
 	}
 

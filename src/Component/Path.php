@@ -86,7 +86,7 @@ class Path {
 	 * @param  string|null  $key
 	 * @return mixed
 	 */
-	public function get(string|null $key = null) {
+	public function get($key = null) {
 
 		return $key === null ? $this->paths : (array_key_exists($key, $this->paths) ? $this->paths[$key] : false);
 
