@@ -81,7 +81,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 		}
 
 		if(empty($component_name['match'])){
-
+			// $component_name['name'] // name conversion
 			$this->initDatasWithCommand($class_::component(), array_key_exists('name', $component_name) ? $component_name['name'] : $component_name_arg, $arguments, $app_config);
 
 		}
@@ -164,6 +164,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 
 			$template_to_generate = $vrf['template'];
 
+			$template_engine->template()->templateToGenerate($template_to_generate);
 			// $this->compliant_verif($template_engine->template()->templateToGenerate($template_to_generate));
 
 			$args = $this->checkComponentsArgs($component_name, $arguments);

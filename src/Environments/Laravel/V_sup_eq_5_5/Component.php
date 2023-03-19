@@ -142,7 +142,7 @@ class Component extends Command {
 		$component_type_name = $this->askComponentName();
 
 		if(empty($component_type_name['match'])){
-
+			// $component_type_name['name']  = ''; // name conversion
 			$this->initDatasWithInput($class_::component(), $component_type_name['name'], $app_config);
 
 		}
@@ -242,7 +242,7 @@ class Component extends Command {
 						) $template_engine->config()->set($value['config']);
 
 						$template_engine->config()->merge();
-						$template_engine->name($value['name']);
+						$template_engine->name($value['name']); // name conversion
 
 						$t = $template_engine->config()->getMerge('replace_component_exist');
 
