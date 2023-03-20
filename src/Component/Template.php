@@ -137,6 +137,12 @@ class Template {
 				},
 				'last' => false,
 				'empty' => true
+			],
+			'change_file' => [
+				'require' => false,
+				'verif' => 'is_callable',
+				'last' => true,
+				'empty' => true
 			]
 		];
 
