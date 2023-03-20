@@ -104,9 +104,9 @@ class Template {
 				'require' => false,
 				'verif' => function($value){
 
-					return is_string($value) || is_callable($value)
+					return is_string($value) || is_callable($value) || is_array($value)
 						? true
-						: 'La clé `convert_case` n\'est pas une chaîne de caractère ou une fonction de rappel !'
+						: 'La clé `convert_case` n\'est pas une chaîne de caractère ni une fonction de rappel ou un tableau !'
 					;
 
 				},
