@@ -70,7 +70,7 @@ class Path {
 					: 'lower'
 				;
 
-				$this->addPath($key, $value['path'], $ext, $convert_case);
+				$this->addPath($key, $value['path'], $ext, (isset($value['change_file']) && !is_string($value['change_file']) && is_callable($value['change_file']) ? $value['change_file'] : null), $convert_case);
 
 				$this->mergeWithTemplate('path', $key, $this->paths[$key]);
 
@@ -98,10 +98,11 @@ class Path {
 	 * @param  string             $template
 	 * @param  array|string|null  $value
 	 * @param  string             $ext
+	 * @param  callable|null      $change_file
 	 * @param  string|callable    $convert_case
 	 * @return Compio\Component\Path
 	 */
-	public function addPath(string $template, $value, string $ext, $convert_case = 'lower'){
+	public function addPath(string $template, $value, string $ext, $change_file, $convert_case = 'lower'){
 
 		$value = is_array($value) ? $value : [$value];
 
@@ -109,13 +110,28 @@ class Path {
 
 		foreach ($value as $k => $val){
 
-			$short = $this->convert_case($this->name()->getClassName(), $convert_case);
+			$short = trim($this->name()->getClassName(), '\\');
 
 			$f = $val . '\\' . $short . ".$ext";
 
 			$vv = pathinfo($f);
+
+			$vv['filename'] = $this->convert_case($vv['filename'], $convert_case);
+
+			$vv['basename'] = $vv['filename'] . '.'. $vv['extension'];
 			$vv['file'] = $vv['dirname'] . '\\' . $vv['basename'];
-			$vv['short'] = $short;
+			$vv['short_dirname'] = trim(pathinfo($short)['dirname'], '.');
+			$vv['short'] = $vv['short_dirname'] . '\\' . $vv['filename'];
+
+			if(is_callable($change_file)) $vv['new'] = $change_file($vv);
+
+			if(is_array($vv) && isset($vv['new'])
+				&& isset($vv['new']['file']) && is_string($vv['new']['file'])
+				&& isset($vv['new']['short']) && is_string($vv['new']['short'])
+				&& isset($vv['new']['basename']) && is_string($vv['new']['basename'])
+				&& isset($vv['new']['filename']) && is_string($vv['new']['filename'])
+				&& isset($vv['new']['extension']) && is_string($vv['new']['extension'])
+			) $vv = $vv['new'];
 
 			if(empty($this->paths[$template]) || !in_array($vv, $this->paths[$template]))
 				$this->paths[$template][$k] = $vv;
@@ -162,17 +178,11 @@ class Path {
 				: ($type == 'upper' || $type == 'u'
 					? strtoupper($value)
 					: ($type == 'ucfirst' || $type == 'uc_first' || $type == 'uf'
-						? preg_replace_callback('/\\\([^ ])/i', function($_1){return strtoupper(current($_1));}, ucfirst($value))
+						? ucfirst($value)
 						: ($type == 'lcfirst' || $type == 'lc_first' || $type == 'lf'
-							? preg_replace_callback('/\\\([^ ])/i', function($_1){return strtolower(current($_1));}, lcfirst($value))
+							? lcfirst($value)
 							: (($type == 'camel' || $type == 'kebab' || $type == 'snake' || $type == 'studly') && is_callable('Str::' . $type)
-								? (function($t, $v){
-									preg_match('/(.*\\\)(.*)$/', $v, $match);
-									array_shift($match);
-									$match[count($match) - 1] = call_user_func('Str::' . $t, $match[count($match) - 1]);
-									return implode('', $match);
-									})
-								($type, $value)
+								? call_user_func('Str::' . $type, $value)
 								: strtolower($value)
 							)
 						)
