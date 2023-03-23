@@ -518,6 +518,7 @@ class Component extends Command {
 
 			$config_template_to_generate = array_map(
 				function($v){
+					$v = !is_string($v) && is_callable($v) && is_array($conf = $v()) ? $conf : $v;
 					return (bool) array_key_exists('generate', $v)
 						? (is_array($v['generate']) 
 							? end($v['generate']) 
@@ -574,6 +575,27 @@ class Component extends Command {
 		}, $value) : $value), $trim);
 	}
 
+	/*
+		Si les données passer sur un model sont conformes
+		ex. [
+			
+		'template' => [
+			'model' => [
+				...
+				'generate' => true,
+				'change_name' => 1, // by default is require call back function
+				...
+			],
+		]
+		function `templateToGenerate` will return : 
+			array:1 [
+			  "model" => array:1 [
+			    "change_name" => "Verifiez la valeur de la clé `change_name` car elle n'est pas conforme !"
+			  ]
+			]
+		and in @param $value
+		ex. line 196, 276
+	*/
 	// public function compliant_verif($value){
 	// 	$this->error('lorem');
 	// 	dump($value);

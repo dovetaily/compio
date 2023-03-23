@@ -107,10 +107,34 @@ class Component extends ComponentBase {
 
 		foreach (array_keys($this->config()->getMerge('template')) as $template) {
 
-			if((!empty($this->config()->get()) && array_key_exists($template, ($rec = $this->config()->get('template'))) && array_key_exists('path', ($rec = $rec[$template]))) || (!empty($this->config()->getApp()) && array_key_exists($template, (($rec = $this->config()->getApp('template')) === false 
-					? [] 
-					: $rec
-			)) && array_key_exists('path', ($rec = $rec[$template]))) || (array_key_exists($template, ($rec = $this->config()->getDefault('template'))) && array_key_exists('path', ($rec = $rec[$template])))){
+			
+			if(
+				(
+					!empty($this->config()->get()) && 
+					array_key_exists($template, ($rec = $this->config()->get('template'))) && 
+					array_key_exists('path', (
+						$rec = (
+							function($template){ 
+								return !is_string($template) && is_callable($template) && is_array($conf = $template()) ? $conf : $template;  
+							}
+						)($rec[$template])
+					))
+				) || 
+				(
+					!empty($this->config()->getApp()) && array_key_exists($template, (
+						($rec = $this->config()->getApp('template')) === false 
+						? [] 
+						: $rec
+					)) && 
+					array_key_exists('path', ($rec = $rec[$template]))
+				) || 
+				(
+					array_key_exists($template, (
+						$rec = $this->config()->getDefault('template')
+					)) && 
+					array_key_exists('path', ($rec = $rec[$template]))
+				)
+			){
 
 				$ext = trim(array_key_exists('file_extension', $rec)
 					? (is_array($rec['file_extension']) && !empty($rec['file_extension']) && is_string($e = end($rec['file_extension']))
@@ -222,15 +246,19 @@ class Component extends ComponentBase {
 
 								$value = is_array($value) && array_key_exists('callable', $value)
 									? $value['callable'](...[
+										/* $default_value */
 										(array_key_exists('default_value', $value) && (is_numeric($value['default_value']) || is_string($value['default_value']))
 											? $value['default_value']
 											: null
 										),
+										/* $template_datas */
 										$datas,
+										/* $arguments */
 										(!empty($a = $this->arguments()->get())
 											? $a
 											: []
 										),
+										/* callback_format_value */
 										function($value, $type = null, $equal = ' = '){
 											return \Compio\Traits\ArgumentFormat::format_value($value, $type, $equal);
 										}
@@ -241,7 +269,10 @@ class Component extends ComponentBase {
 									)
 								;
 
-								$content = str_replace($key, $value, $content);
+								if(!is_string($value) && is_callable($value) && is_string($ret = $value(...[$content])))
+									$content = $ret;
+								elseif(is_string($value))
+									$content = str_replace($key, $value, $content);
 
 							}
 

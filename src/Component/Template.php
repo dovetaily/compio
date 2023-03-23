@@ -39,18 +39,22 @@ class Template {
 
 		foreach ($datas as $key => $value) {
 
-			$datas[$key]['generate'] = false;
+			$value = !is_string($value) && is_callable($value) && is_array($conf = $value()) ? $conf : $value;
+
+			$value['generate'] = false;
 
 			$c = null;
 
 			if(in_array($key, $templates) && ($c = Compliant::is_compliant($key, $value, self::getTemplateStructure())) === true){
 
-				$datas[$key]['generate'] = true;
+				$value['generate'] = true;
 
-				$t[$key] = $datas[$key];
+				$t[$key] = $value;
 
 			}
 			elseif($c !== null) $error[$key] = $c;
+
+			$datas[$key] = $value;
 
 		}
 
