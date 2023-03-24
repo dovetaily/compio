@@ -207,13 +207,14 @@ class Component extends ComponentFoundation implements CommandInterface {
 					'name' => $name,
 					'value' => ($value == ""
 						? \Compio\Component\Arguments::NULL_VALUE
-						: (is_numeric($value)
-							? (strpos($value, '.') || $value < PHP_INT_MIN || $value > PHP_INT_MAX
-								? (double) $value
-								: (int) $value
-							)
-							: $value
-						)
+						: \Compio\Traits\ArgumentFormat::type_verif('/^\'.*?\'$|^\".*?\"$/', $value, false, ["'", '"'])
+						// : (is_numeric($value)
+						// 	? (strpos($value, '.') || $value < PHP_INT_MIN || $value > PHP_INT_MAX
+						// 		? (double) $value
+						// 		: (int) $value
+						// 	)
+						// 	: $value
+						// )
 					)
 				];
 
