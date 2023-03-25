@@ -310,7 +310,16 @@ class Component extends Command {
 	 */
 	public static function getAppConfig(string $path = 'compio.component.config'){
 
-		return function_exists('\config') && ($v = config($path)) !== null ? $v : [];
+		return function_exists('\config') && ($v = config($path)) !== null 
+			? (is_callable($v)
+				? (is_array($ret = $v())
+					? $ret
+					: []
+				)
+				: $v
+			) 
+			: []
+		;
 
 	}
 
