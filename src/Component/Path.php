@@ -35,10 +35,17 @@ class Path {
 
 				if(is_array($value['path'])){
 
-					$user_path = !empty($a = $this->config()->get()) && array_key_exists('template', $a) && array_key_exists($key, $a['template']) && array_key_exists('path', $a['template'][$key]) && $a['template'][$key]['path'] 
-						? $a['template'][$key]['path']
-						: (!empty($a = $this->config()->getApp()) && array_key_exists('template', $a) && array_key_exists($key, $a['template']) && array_key_exists('path', $a['template'][$key]) && $a['template'][$key]['path']
-							? $a['template'][$key]['path']
+					$user_path = !empty($a = $this->config()->get()) && array_key_exists('template', $a) && array_key_exists($key, $a['template']) && array_key_exists('path', $cnf = (function($cnf){
+						if(!is_string($cnf) && is_callable($cnf)) return $cnf();
+						else $cnf;
+					})($a['template'][$key])) && $cnf['path'] 
+						? $cnf['path']
+						: (!empty($a = $this->config()->getApp()) && array_key_exists('template', $a) && array_key_exists($key, $a['template']) && array_key_exists('path', ($ret = (
+							function($template){
+								return !is_string($template) && is_callable($template) && is_array($conf = $template()) ? $conf : $template;
+							}
+							)($a['template'][$key]))) && $ret['path']
+							? $ret['path']
 							: null
 						)
 					;
@@ -95,11 +102,11 @@ class Path {
 	/**
 	 * Add path.
 	 *
-	 * @param  string             $template
-	 * @param  array|string|null  $value
-	 * @param  string             $ext
-	 * @param  callable|null      $change_file
-	 * @param  string|callable    $convert_case
+	 * @param  string                 $template
+	 * @param  array|string|null      $value
+	 * @param  string                 $ext
+	 * @param  callable|null          $change_file
+	 * @param  string|callable|array  $convert_case
 	 * @return Compio\Component\Path
 	 */
 	public function addPath(string $template, $value, string $ext, $change_file, $convert_case = 'lower'){
@@ -123,7 +130,8 @@ class Path {
 			$vv['short_dirname'] = trim(pathinfo($short)['dirname'], '.');
 			$vv['short'] = $vv['short_dirname'] . '\\' . $vv['filename'];
 
-			if(is_callable($change_file)) $vv['new'] = $change_file($vv);
+			if(is_callable($change_file) && ($ret = $change_file(...[$vv, $k, $value])) !== null) $vv['new'] = $ret;
+			// if(is_callable($change_file)) $vv['new'] = $change_file($vv);
 
 			if(is_array($vv) && isset($vv['new'])
 				&& isset($vv['new']['file']) && is_string($vv['new']['file'])

@@ -23,6 +23,13 @@ class Component extends ComponentBase {
 	];
 
 	/**
+	 * Error message and state.
+	 * 
+	 *  @var array
+	 */
+	private $all_keywords = [];
+
+	/**
 	 * Create a new Compio\TemplateEngines\Blade\V_sup_eq_5_5\Factories\Component instance.
 	 *
 	 * @return void
@@ -105,19 +112,17 @@ class Component extends ComponentBase {
 
 		$p = [];
 
+		$temp = function($template){ 
+			return !is_string($template) && is_callable($template) && is_array($conf = $template()) ? $conf : $template;  
+		};
 		foreach (array_keys($this->config()->getMerge('template')) as $template) {
 
-			
 			if(
 				(
 					!empty($this->config()->get()) && 
 					array_key_exists($template, ($rec = $this->config()->get('template'))) && 
 					array_key_exists('path', (
-						$rec = (
-							function($template){ 
-								return !is_string($template) && is_callable($template) && is_array($conf = $template()) ? $conf : $template;  
-							}
-						)($rec[$template])
+						$rec = $temp($rec[$template])
 					))
 				) || 
 				(
@@ -126,13 +131,13 @@ class Component extends ComponentBase {
 						? [] 
 						: $rec
 					)) && 
-					array_key_exists('path', ($rec = $rec[$template]))
+					array_key_exists('path', ( $rec = $temp($rec[$template]) ))
 				) || 
 				(
 					array_key_exists($template, (
 						$rec = $this->config()->getDefault('template')
 					)) && 
-					array_key_exists('path', ($rec = $rec[$template]))
+					array_key_exists('path', ( $rec = $temp($rec[$template]) ))
 				)
 			){
 
@@ -246,22 +251,31 @@ class Component extends ComponentBase {
 
 								$value = is_array($value) && array_key_exists('callable', $value)
 									? $value['callable'](...[
-										/* $default_value */
-										(array_key_exists('default_value', $value) && (is_numeric($value['default_value']) || is_string($value['default_value']))
-											? $value['default_value']
+										/* 0 - $default_value */
+										(array_key_exists('default_value', $value) && (is_numeric($value['default_value']) || is_string($value['default_value']) || (is_array($value['default_value']) && isset($value['default_value'][$key])))
+											? (is_array($value['default_value'])
+												? $value['default_value'][$key]
+												: $value['default_value']
+											)
 											: null
 										),
-										/* $template_datas */
+										/* 1 - $template_datas */
 										$datas,
-										/* $arguments */
+										/* 2 - $arguments */
 										(!empty($a = $this->arguments()->get())
 											? $a
 											: []
 										),
-										/* callback_format_value */
+										/* 3 - callback_format_value */
 										function($value, $type = null, $equal = ' = '){
 											return \Compio\Traits\ArgumentFormat::format_value($value, $type, $equal);
-										}
+										},
+										/* 4 - $file_content */
+										$content,
+										/* 5 - $file_path|$current_file_content */
+										$response_template['file'],
+										/* 6 - $all_keywords */
+										$this->all_keywords
 									])
 									: (is_string($value) || is_numeric($value) 
 										? $value 
@@ -269,10 +283,14 @@ class Component extends ComponentBase {
 									)
 								;
 
-								if(!is_string($value) && is_callable($value) && is_string($ret = $value(...[$content])))
-									$content = $ret;
-								elseif(is_string($value))
+								if(empty($this->all_keywords)) $this->all_keywords[$type] = [$key => is_bool($value) ? $keywords[$key] : $value];
+								else $this->all_keywords[$type][$key] = is_bool($value) ? $keywords[$key] : $value;
+
+								if(is_string($value)){
 									$content = str_replace($key, $value, $content);
+									$datas['keywords'][$key] = ['result' => $value, 'original' => $datas['keywords'][$key]];
+								}
+								elseif($value === true) $content = file_get_contents($response_template['file']);
 
 							}
 
