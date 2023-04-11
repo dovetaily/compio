@@ -131,7 +131,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 	 */
 	public function initDatasWithCommand(object $template_engine, string $component_name, $arguments, array $app_config = []){
 
-		$template_engine->config()->setApp($app_config);
+		$template_engine->config()->setApp($this->getTemplateConfig($app_config));
 		$template_engine->config()->merge();
 		$template_engine->name($component_name);
 
@@ -148,16 +148,11 @@ class Component extends ComponentFoundation implements CommandInterface {
 
 		$template_engine->config()->setMerge($t, 'replace_component_exist');
 
-		$rp = [$template_engine->config()->getMerge('replace_component_exist'), $template_engine->config()->getMerge('require_template')];
+		$rp = $template_engine->config()->getMerge('require_template');
 
-		$vrf = $this->componentExist(
-			(is_array($rp[0]) 
-				? end($rp[0]) 
-				: ($rp[0])
-			)
-		, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $component_name, (bool) (is_array($rp[1])
-			? end($rp[1])
-			: $rp[1]
+		$vrf = $this->componentExist($template_engine->config()->getMerge('template'), $component_name, (bool) (is_array($rp)
+			? end($rp)
+			: $rp
 		));
 
 		if($vrf['status'] === true){

@@ -49,6 +49,10 @@ class Component extends Command {
 	 */
 	public function generate(object $template_engine){
 
+		$template_engine->path()->init();
+
+		$this->fileExists($template_engine);
+
 		$response_template = $template_engine->generateInit();
 
 		foreach ($response_template as $key => $value) {
@@ -57,15 +61,61 @@ class Component extends Command {
 
 			$message = array_key_exists('message', $value) ? $value['message'] : null;
 
-			if($error === false)
-				$this->info($this->stylize(is_null($message) ? 'Own message' : $message));
-			elseif($error === true)
-				$this->error($this->stylize(is_null($message) ? 'Own message' : $message));
-			else
-				$this->warn($this->stylize(is_null($message) ? 'Own message' : $message));
+			if(!is_null($message)){
+				if($error === false)
+					$this->info($this->stylize($message === true ? 'SUCCESS !' : $message));
+				elseif($error === true)
+					$this->error($this->stylize($message === true ? 'ERROR !' : $message));
+				elseif($error === 1)
+					echo($this->stylize($message === true ? 'ERROR !' : $message) . "\n");
+				else
+					$this->warn($this->stylize($message === true ? 'wARNING !' : $message));
+			}
 
 		}
 
+	}
+
+	/**
+	 * Generate template
+	 *
+	 * @param  object  $template_engine
+	 * @return void
+	 */
+	public function fileExists(object $template_engine)
+	{
+
+		$replace_component_exists = $template_engine->config()->getMerge('replace_component_exist');
+		$replace_component_exists = is_array($replace_component_exists) ? end($replace_component_exists) : $replace_component_exists;
+
+		if($replace_component_exists !== true){
+			$all = false;
+			$choices = [
+				1 => 'Modifier le fichier',
+				2 => 'Ne pas modifier'
+			];
+			$i = 1;
+			$templates = array_keys($template_engine->template()->get());
+			foreach ($template_engine->template()->get() as $template_key => $template_datas) {
+				$new_path = [];
+				foreach ($template_datas['path'] as $key => $path) {
+					if(file_exists($path['file']) && is_bool($all)){
+						if($replace_component_exists === false || $all === true) { $path['generate'] = false; $new_path[$key] = $path; continue;}
+						$this->warn($this->stylize("\tLe fichier de `" . $template_key . "` !  "));
+						if($i > 1) { $choices[3] = 'Ne pas modifier le reste [ ' . implode(', ', $templates) . ' ]'; $choices[4] = 'Modifier tous le reste [ ' . implode(', ', $templates) . ' ]'; }
+						$choice = $this->choice('Le fichier "' . $path['file'] . '" existe déjà ! ', $choices, 2);
+						$i++;
+						if($choice == $choices[2]) { $path['generate'] = false; $new_path[$key] = $path; continue;}
+						elseif(isset($choices[3]) && $choice == $choices[3]) { $all = true; $path['generate'] = false; $new_path[$key] = $path; continue; }
+						elseif(isset($choices[4]) && $choice == $choices[4]) $all = null;
+					}
+					$new_path[$key] = $path;
+				}
+				$template_datas['path'] = $new_path;
+				$template_engine->template()->set($template_datas, $template_key);
+				array_shift($templates);
+			}
+		}
 	}
 
 	/**
@@ -169,20 +219,15 @@ class Component extends Command {
 	 */
 	public function initDatasWithInput(object $template_engine, string $component_name, array $app_config = []){
 
-		$template_engine->config()->setApp($app_config);
+		$template_engine->config()->setApp($this->getTemplateConfig($app_config));
 		$template_engine->config()->merge();
 		$template_engine->name($component_name);
 
-		$rp = [$template_engine->config()->getMerge('replace_component_exist'), $template_engine->config()->getMerge('require_template')];
+		$rp = $template_engine->config()->getMerge('require_template');
 
-		$vrf = $this->componentExist(
-			(is_array($rp[0]) 
-				? end($rp[0]) 
-				: $rp[0]
-			)
-		, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $component_name, (bool) (is_array($rp[1])
-			? end($rp[1])
-			: $rp[1]
+		$vrf = $this->componentExist($template_engine->config()->getMerge('template'), $component_name, (bool) (is_array($rp)
+			? end($rp)
+			: $rp
 		));
 
 		if($vrf['status'] === true){
@@ -227,7 +272,7 @@ class Component extends Command {
 					if(array_key_exists('name', $value) && is_string($value['name']) && !empty($value['name'])){
 
 						$template_engine = $class_::component();
-						$template_engine->config()->setApp($app_config);
+						$template_engine->config()->setApp($this->getTemplateConfig($app_config));
 
 						$value['name'] =  $this->getComponentNameVerify(ComponentName::getPatterns('name'), $this->mergeCharactersDuplicate($value['name']));
 
@@ -253,14 +298,11 @@ class Component extends Command {
 
 						$template_engine->config()->setMerge($t, 'replace_component_exist');
 
-						$rp = [$template_engine->config()->getMerge('replace_component_exist'), $template_engine->config()->getMerge('require_template')];
+						$rp = $template_engine->config()->getMerge('require_template');
 
-						$vrf = $this->componentExist(is_array($rp[0]) 
-							? end($rp[0]) 
-							: ($rp[0])
-						, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $value['name'], (bool) (is_array($rp[1])
-							? end($rp[1])
-							: $rp[1]
+						$vrf = $this->componentExist($template_engine->config()->getMerge('template'), $value['name'], (bool) (is_array($rp)
+							? end($rp)
+							: $rp
 						));
 
 						if($vrf['status'] === true){
@@ -445,108 +487,80 @@ class Component extends Command {
 	/**
 	 * Check if component exist
 	 *
-	 * @param  bool|null      $replace_component_exist
-	 * @param  bool  $component_exist
-	 * @param  array      $module_list
+	 * @param  array   $module_list
 	 * @param  string  $component_name
-	 * @param  bool  $already_ask_template
+	 * @param  bool    $already_ask_template
 	 * @return object
 	 */
-	public function componentExist($replace_component_exist, $component_exist, $module_list, $component_name, $already_ask_template = false){
+	public function componentExist($module_list, $component_name, $already_ask_template = false){
 
 		$vrf = true;
 
 		$module = array_keys($module_list);
 
-		if(($replace_component_exist === null && (!empty($component_exist)) === true) || ($already_ask_template === true && $replace_component_exist !== false)){
+		$default_generate = (function($module_list){
 
-			if($already_ask_template !== true || ((!empty($component_exist)) === true && $replace_component_exist === null)){
-				
-				$this->warn(" Component \"" . $component_name . "\" already exists.\n\n File" . (count($component_exist) > 1 
-					? 's' 
-					: ''
-				) . " found :");
+			$default_generate = '';
 
-				foreach ($component_exist as $template => $file)
-					$this->warn("\n\t Template `" . $template . "` : " . $file);
+			$tb = [];
 
-				if($this->confirm('Do you want to continue and regenerate component ?', true) === false)
-					$vrf = false;
+			$i = 1;
+
+			foreach ($module_list as $template => $val) {
+
+				$val = is_callable($val) ? $val() : $val;
+
+				if(isset($val['generate']) && ((is_array($val['generate']) && end($val['generate']) === true) || $val['generate'] === true)){
+					$default_generate .= $i . ',';
+
+					$tb[] = $template;
+				}
+
+				$i++;
 
 			}
+			return ['template' => $tb, 'keys' => empty($default_generate) ? '0' : trim($default_generate , ',')];
 
-			if($vrf === true) $module = (function($cons, $module_list, $component_exist, $already_ask_template){
+		})($module_list);
 
-				$turn = true;
+		if($already_ask_template === true){
 
-				while($turn === true){
 
-					echo " Only change templates :\n".implode('', array_map(function(string $key, string $val){return "\n\t[" . $key . "] " . $val; }, array_keys($module_list), array_values($module_list))) . "\n\n";
+			$mdl = array_merge(['ALL'], $module);
 
-					$generate__ = explode(',', $cons->ask('Choose one or more templates (ex. 2, 4)', '0'));
+			$turn = true;
 
-					$vr = [];
+			while($turn === true){
 
-					foreach ($generate__ as $kk) {
+				echo " Only change templates :\n".implode('', array_map(function(string $key, string $val){return "\n\t[" . $key . "] " . $val; }, array_keys($mdl), array_values($mdl))) . "\n\n";
 
-						if(array_key_exists(trim($kk), $module_list)) $vr[] = $module_list[trim($kk)];
-						elseif(is_numeric($kk)) $cons->warn("\t  The key `$kk` doesn't exist ! So she will be ignored !  ");
+				$generate__ = explode(',', $this->ask('Choose one or more templates (ex. 2, 4)', $default_generate['keys']));
 
-					}
+				$vr = [];
 
-					if(empty($vr)) $cons->error($cons->stylize("\t  Choose from the list of options ! ([0-9,]+|[0-9])  ") . "\n");
-					else{
+				foreach ($generate__ as $kk) {
 
-						if(in_array('ALL', $vr)) $vr = (function($t){array_shift($t); return $t;})($module_list);
-
-						$cons->info($cons->stylize("\t  These template(s) will be " . (
-							$already_ask_template !== true || (!empty($component_exist)) === true 
-								? 're' 
-								: null
-						) . "generate : " . implode(', ', $vr) . "  \n"));
-
-						$turn = false;
-
-					}
+					if(array_key_exists(trim($kk), $mdl)) $vr[] = $mdl[trim($kk)];
+					elseif(is_numeric($kk)) $this->warn("\t  The key `$kk` doesn't exist ! So she will be ignored !  ");
 
 				}
 
-				return $vr;
+				if(empty($vr)) $this->error($this->stylize("\t  Choose from the list of options ! ([0-9,]+|[0-9])  ") . "\n");
+				else{
 
-			})($this, array_merge(['ALL'], $module), (!empty($component_exist)), $already_ask_template);
+					if(in_array('ALL', $vr)) $vr = (function($t){array_shift($t); return $t;})($mdl);
 
-		}
-		elseif($replace_component_exist === true && (!empty($component_exist)) === true) $vrf = true;
-		elseif($replace_component_exist === false && (!empty($component_exist)) === true) {
-			$vrf = false;
+					$this->info($this->stylize("\t  These template(s) will be generate : " . implode(', ', $vr) . "  \n"));
 
-			$module = [];
-		}
+					$turn = false;
 
-		if(!(!empty($component_exist))){
+					$module = $vr;
 
-			$config_template_to_generate = array_map(
-				function($v){
-					$v = !is_string($v) && is_callable($v) && is_array($conf = $v()) ? $conf : $v;
-					return (bool) array_key_exists('generate', $v)
-						? (is_array($v['generate']) 
-							? end($v['generate']) 
-							: $v['generate']
-						)
-						: true
-					;
 				}
-				, $module_list
-			);
 
-			$tab = [];
-
-			foreach ($module as $key)
-				if($config_template_to_generate[$key] === true) $tab[] = $key;
-
-			$module = $tab;
-
+			}
 		}
+		else $module = $default_generate['template'];
 
 		return [
 			'status' => $vrf,
@@ -582,6 +596,21 @@ class Component extends Command {
 		return trim((!empty(trim($value)) && is_string($value) ? preg_replace_callback($pattern, function($match){
 			return end($match)[0];
 		}, $value) : $value), $trim);
+	}
+
+	/**
+	 * Get a template configuration
+	 *
+	 * @param  object  $config
+	 * @return array
+	 */
+	public function getTemplateConfig($config)
+	{
+		if(isset($config['template']) && is_array($config['template']))
+			foreach ($config['template'] as $template__ => $value__)
+				$config['template'][$template__] = !is_string($value__) && is_callable($value__) ? $value__() : $value__;
+
+		return $config;
 	}
 
 	/*
