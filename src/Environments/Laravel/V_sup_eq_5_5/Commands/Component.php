@@ -131,7 +131,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 	 */
 	public function initDatasWithCommand(object $template_engine, string $component_name, $arguments, array $app_config = []){
 
-		$template_engine->config()->setApp($app_config);
+		$template_engine->config()->setApp($this->getTemplateConfig($app_config));
 		$template_engine->config()->merge();
 		$template_engine->name($component_name);
 

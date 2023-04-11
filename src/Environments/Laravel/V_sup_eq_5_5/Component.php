@@ -219,7 +219,7 @@ class Component extends Command {
 	 */
 	public function initDatasWithInput(object $template_engine, string $component_name, array $app_config = []){
 
-		$template_engine->config()->setApp($app_config);
+		$template_engine->config()->setApp($this->getTemplateConfig($app_config));
 		$template_engine->config()->merge();
 		$template_engine->name($component_name);
 
@@ -272,7 +272,7 @@ class Component extends Command {
 					if(array_key_exists('name', $value) && is_string($value['name']) && !empty($value['name'])){
 
 						$template_engine = $class_::component();
-						$template_engine->config()->setApp($app_config);
+						$template_engine->config()->setApp($this->getTemplateConfig($app_config));
 
 						$value['name'] =  $this->getComponentNameVerify(ComponentName::getPatterns('name'), $this->mergeCharactersDuplicate($value['name']));
 
@@ -596,6 +596,21 @@ class Component extends Command {
 		return trim((!empty(trim($value)) && is_string($value) ? preg_replace_callback($pattern, function($match){
 			return end($match)[0];
 		}, $value) : $value), $trim);
+	}
+
+	/**
+	 * Get a template configuration
+	 *
+	 * @param  object  $config
+	 * @return array
+	 */
+	public function getTemplateConfig($config)
+	{
+		if(isset($config['template']) && is_array($config['template']))
+			foreach ($config['template'] as $template__ => $value__)
+				$config['template'][$template__] = !is_string($value__) && is_callable($value__) ? $value__() : $value__;
+
+		return $config;
 	}
 
 	/*
