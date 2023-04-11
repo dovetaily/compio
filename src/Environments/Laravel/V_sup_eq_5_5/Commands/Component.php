@@ -81,7 +81,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 		}
 
 		if(empty($component_name['match'])){
-
+			// $component_name['name'] // name conversion
 			$this->initDatasWithCommand($class_::component(), array_key_exists('name', $component_name) ? $component_name['name'] : $component_name_arg, $arguments, $app_config);
 
 		}
@@ -148,22 +148,18 @@ class Component extends ComponentFoundation implements CommandInterface {
 
 		$template_engine->config()->setMerge($t, 'replace_component_exist');
 
-		$rp = [$template_engine->config()->getMerge('replace_component_exist'), $template_engine->config()->getMerge('require_template')];
+		$rp = $template_engine->config()->getMerge('require_template');
 
-		$vrf = $this->componentExist(
-			(is_array($rp[0]) 
-				? end($rp[0]) 
-				: ($rp[0])
-			)
-		, $template_engine->componentExists(), $template_engine->config()->getMerge('template'), $component_name, (bool) (is_array($rp[1])
-			? end($rp[1])
-			: $rp[1]
+		$vrf = $this->componentExist($template_engine->config()->getMerge('template'), $component_name, (bool) (is_array($rp)
+			? end($rp)
+			: $rp
 		));
 
 		if($vrf['status'] === true){
 
 			$template_to_generate = $vrf['template'];
 
+			$template_engine->template()->templateToGenerate($template_to_generate);
 			// $this->compliant_verif($template_engine->template()->templateToGenerate($template_to_generate));
 
 			$args = $this->checkComponentsArgs($component_name, $arguments);
@@ -206,13 +202,14 @@ class Component extends ComponentFoundation implements CommandInterface {
 					'name' => $name,
 					'value' => ($value == ""
 						? \Compio\Component\Arguments::NULL_VALUE
-						: (is_numeric($value)
-							? (strpos($value, '.') || $value < PHP_INT_MIN || $value > PHP_INT_MAX
-								? (double) $value
-								: (int) $value
-							)
-							: $value
-						)
+						: \Compio\Traits\ArgumentFormat::type_verif('/^\'.*?\'$|^\".*?\"$/', $value, false, ["'", '"'])
+						// : (is_numeric($value)
+						// 	? (strpos($value, '.') || $value < PHP_INT_MIN || $value > PHP_INT_MAX
+						// 		? (double) $value
+						// 		: (int) $value
+						// 	)
+						// 	: $value
+						// )
 					)
 				];
 

@@ -39,18 +39,22 @@ class Template {
 
 		foreach ($datas as $key => $value) {
 
-			$datas[$key]['generate'] = false;
+			$value = !is_string($value) && is_callable($value) && is_array($conf = $value()) ? $conf : $value;
+
+			$value['generate'] = false;
 
 			$c = null;
 
 			if(in_array($key, $templates) && ($c = Compliant::is_compliant($key, $value, self::getTemplateStructure())) === true){
 
-				$datas[$key]['generate'] = true;
+				$value['generate'] = true;
 
-				$t[$key] = $datas[$key];
+				$t[$key] = $value;
 
 			}
 			elseif($c !== null) $error[$key] = $c;
+
+			$datas[$key] = $value;
 
 		}
 
@@ -104,9 +108,9 @@ class Template {
 				'require' => false,
 				'verif' => function($value){
 
-					return is_string($value) || is_callable($value)
+					return is_string($value) || is_callable($value) || is_array($value)
 						? true
-						: 'La clé `convert_case` n\'est pas une chaîne de caractère ou une fonction de rappel !'
+						: 'La clé `convert_case` n\'est pas une chaîne de caractère ni une fonction de rappel ou un tableau !'
 					;
 
 				},
@@ -136,6 +140,12 @@ class Template {
 
 				},
 				'last' => false,
+				'empty' => true
+			],
+			'change_file' => [
+				'require' => false,
+				'verif' => 'is_callable',
+				'last' => true,
 				'empty' => true
 			]
 		];

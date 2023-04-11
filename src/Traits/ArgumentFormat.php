@@ -127,13 +127,14 @@ trait ArgumentFormat {
 	 * @param  string            $pattern
 	 * @param  string            $value
 	 * @param  bool|string|null  $be_null
-	 * @param  string            $strophe
+	 * @param  string|array      $strophe
 	 * @return mixed
 	 */
-	public static function type_verif(string $pattern, string $value, $be_null, string $strophe){
-
+	public static function type_verif(string $pattern, string $value, $be_null, $strophe){
+		$strophe = is_string($strophe) ? [$strophe] : $strophe;
+		$trim_v = (function($val, $tab){foreach ($tab as $v) { trim($val, $v); } return $val;})($value, $strophe);
 		return preg_match($pattern, $value)
-			? trim($value, $strophe)
+			? $trim_v
 			: (
 				$value == 'true'
 					? true
@@ -144,9 +145,20 @@ trait ArgumentFormat {
 							$value == 'null'
 							? ($be_null === false ? null : (is_string($be_null) && !empty($be_null) ? $be_null : '!beNull'))
 							: (
-								((float) $value) && preg_match('/[0-9]+/', $value) && !(preg_match('/\.([0-9]+)\./', $value))
-								? ((float) $value)
-								: trim($value, $strophe)
+								// ((float) $value) && preg_match('/[0-9]+/', $value) && !(preg_match('/\.([0-9]+)\./', $value))
+								is_numeric($value)
+								// ? ((float) $value)
+								? (strpos($value, '.') || $value < PHP_INT_MIN || $value > PHP_INT_MAX
+									? (double) $value
+									: (int) $value
+								)
+								// : trim($value, $strophe)
+								: (function($v){
+									preg_match('/^\\[.*\\]$|^array\\(.*\\)$/', $v, $m);
+									$exp = '$test = ' . end($m) . ';';
+									try { eval($exp); } catch (\Error $e) { $test = $v; }
+									return $test;
+								})($trim_v)
 							)
 						)
 					)

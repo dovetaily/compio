@@ -18,9 +18,16 @@ class Component extends ComponentBase {
 	public $error = [
 		[
 			'status_error' => false,
-			'message' => null
+			'message' => true
 		]
 	];
+
+	/**
+	 * Error message and state.
+	 * 
+	 *  @var array
+	 */
+	private $all_keywords = [];
 
 	/**
 	 * Create a new Compio\TemplateEngines\Blade\V_sup_eq_5_5\Factories\Component instance.
@@ -105,12 +112,34 @@ class Component extends ComponentBase {
 
 		$p = [];
 
+		$temp = function($template){ 
+			return !is_string($template) && is_callable($template) && is_array($conf = $template()) ? $conf : $template;  
+		};
 		foreach (array_keys($this->config()->getMerge('template')) as $template) {
 
-			if((!empty($this->config()->get()) && array_key_exists($template, ($rec = $this->config()->get('template'))) && array_key_exists('path', ($rec = $rec[$template]))) || (!empty($this->config()->getApp()) && array_key_exists($template, (($rec = $this->config()->getApp('template')) === false 
-					? [] 
-					: $rec
-			)) && array_key_exists('path', ($rec = $rec[$template]))) || (array_key_exists($template, ($rec = $this->config()->getDefault('template'))) && array_key_exists('path', ($rec = $rec[$template])))){
+			if(
+				(
+					!empty($this->config()->get()) && 
+					array_key_exists($template, ($rec = $this->config()->get('template'))) && 
+					array_key_exists('path', (
+						$rec = $temp($rec[$template])
+					))
+				) || 
+				(
+					!empty($this->config()->getApp()) && array_key_exists($template, (
+						($rec = $this->config()->getApp('template')) === false 
+						? [] 
+						: $rec
+					)) && 
+					array_key_exists('path', ( $rec = $temp($rec[$template]) ))
+				) || 
+				(
+					array_key_exists($template, (
+						$rec = $this->config()->getDefault('template')
+					)) && 
+					array_key_exists('path', ( $rec = $temp($rec[$template]) ))
+				)
+			){
 
 				$ext = trim(array_key_exists('file_extension', $rec)
 					? (is_array($rec['file_extension']) && !empty($rec['file_extension']) && is_string($e = end($rec['file_extension']))
@@ -147,8 +176,6 @@ class Component extends ComponentBase {
 	 * @return array
 	 */
 	public function generateInit(){
-
-		$this->path()->init();
 
 		$this->keyword($this->template())->initGenerate();
 
@@ -202,7 +229,7 @@ class Component extends ComponentBase {
 					)
 				;
 
-				if(file_exists($template_file) && is_readable($template_file)){
+				if(file_exists($template_file) && is_readable($template_file) && !empty($datas['path'])){
 
 					$creation_response = $this->createTemplate($template_file, $datas['path']);
 					$creation_response = array_key_exists('status_error', $creation_response) 
@@ -214,26 +241,42 @@ class Component extends ComponentBase {
 
 					foreach ($creation_response as $key => $response_template) {
 
+						$generate_ = !(isset($response_template['generate']) && $response_template['generate'] === false);
+
 						if($response_template['status_error'] !== true){
 
-							$content = file_get_contents($response_template['file']);
+							$content_original = file_get_contents($response_template['file']);
+							$content = $generate_ ? $content_original : '';
 
 							foreach ($keywords as $key => $value) {
 
 								$value = is_array($value) && array_key_exists('callable', $value)
 									? $value['callable'](...[
-										(array_key_exists('default_value', $value) && (is_numeric($value['default_value']) || is_string($value['default_value']))
-											? $value['default_value']
+										/* 0 - $default_value */
+										(array_key_exists('default_value', $value) && (is_numeric($value['default_value']) || is_string($value['default_value']) || (is_array($value['default_value']) && isset($value['default_value'][$key])))
+											? (is_array($value['default_value'])
+												? $value['default_value'][$key]
+												: $value['default_value']
+											)
 											: null
 										),
+										/* 1 - $template_datas */
 										$datas,
+										/* 2 - $arguments */
 										(!empty($a = $this->arguments()->get())
 											? $a
 											: []
 										),
+										/* 3 - callback_format_value */
 										function($value, $type = null, $equal = ' = '){
 											return \Compio\Traits\ArgumentFormat::format_value($value, $type, $equal);
-										}
+										},
+										/* 4 - $file_content */
+										$content,
+										/* 5 - $file_path|$current_file_content */
+										$response_template['file'],
+										/* 6 - $all_keywords */
+										$this->all_keywords
 									])
 									: (is_string($value) || is_numeric($value) 
 										? $value 
@@ -241,11 +284,20 @@ class Component extends ComponentBase {
 									)
 								;
 
-								$content = str_replace($key, $value, $content);
+								if(empty($this->all_keywords)) $this->all_keywords[$type] = [$key => is_bool($value) ? $keywords[$key] : $value];
+								else $this->all_keywords[$type][$key] = is_bool($value) ? $keywords[$key] : $value;
+
+								if(is_string($value)){
+									$content = $generate_ ? str_replace($key, $value, $content) : '';
+									$datas['keywords'][$key] = ['result' => $value, 'original' => $datas['keywords'][$key]];
+								}
+								elseif($value === true && $generate_) $content = file_get_contents($response_template['file']);
 
 							}
-
-							file_put_contents($response_template['file'], $content);
+							if($generate_)
+								file_put_contents($response_template['file'], $content);
+							else
+								file_put_contents($response_template['file'], $content_original);
 
 						}
 
@@ -254,6 +306,7 @@ class Component extends ComponentBase {
 					$ret = empty($creation_response) ? $ret : $creation_response;
 
 				}
+				elseif(empty($datas['path'])) { $ret['status_error'] = false; $ret['message'] = null; }
 				else $ret['message'] = "\t  The template file \"" . $template_file . '" was not found or is not readable !  ';
 
 			}
@@ -279,6 +332,16 @@ class Component extends ComponentBase {
 		$t = [];
 
 		foreach ($copy_template_here as $key => $value) {
+
+			if(isset($value['generate']) && $value['generate'] === false){
+				$t[] = [
+					'status_error' => 1,
+					'message' => "\t" . 'Info | NOT Modified : "' . $value['file'] . '"',
+					'file' => $value['file'],
+					'generate' => false
+				];
+				continue;
+			}
 
 			if(file_exists($value['dirname']) || mkdir($value['dirname'], 0777, true)){
 
