@@ -117,13 +117,13 @@ class Path {
 
 		foreach ($value as $k => $val){
 
-			$short = trim($this->name()->getClassName(), '\\');
+			$short = [];
+			foreach (explode('\\', trim($this->name()->getClassName(), '\\')) as $value) $short[] = $this->convert_case($value, $convert_case);
+			$short = implode('\\', $short);
 
-			$f = $val . '\\' . $short . ".$ext";
+			$f = $val . '\\' . $short . '.' . $ext;
 
 			$vv = pathinfo($f);
-
-			$vv['filename'] = $this->convert_case($vv['filename'], $convert_case);
 
 			$vv['basename'] = $vv['filename'] . '.'. $vv['extension'];
 			$vv['file'] = $vv['dirname'] . '\\' . $vv['basename'];
