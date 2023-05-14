@@ -37,7 +37,7 @@ class Path {
 
 					$user_path = !empty($a = $this->config()->get()) && array_key_exists('template', $a) && array_key_exists($key, $a['template']) && array_key_exists('path', $cnf = (function($cnf){
 						if(!is_string($cnf) && is_callable($cnf)) return $cnf();
-						else $cnf;
+						else return $cnf;
 					})($a['template'][$key])) && $cnf['path'] 
 						? $cnf['path']
 						: (!empty($a = $this->config()->getApp()) && array_key_exists('template', $a) && array_key_exists($key, $a['template']) && array_key_exists('path', ($ret = (
@@ -117,13 +117,13 @@ class Path {
 
 		foreach ($value as $k => $val){
 
-			$short = trim($this->name()->getClassName(), '\\');
+			$short = [];
+			foreach (explode('\\', trim($this->name()->getClassName(), '\\')) as $value) $short[] = $this->convert_case($value, $convert_case);
+			$short = implode('\\', $short);
 
-			$f = $val . '\\' . $short . ".$ext";
+			$f = $val . '\\' . $short . '.' . $ext;
 
 			$vv = pathinfo($f);
-
-			$vv['filename'] = $this->convert_case($vv['filename'], $convert_case);
 
 			$vv['basename'] = $vv['filename'] . '.'. $vv['extension'];
 			$vv['file'] = $vv['dirname'] . '\\' . $vv['basename'];

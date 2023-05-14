@@ -276,7 +276,9 @@ class Component extends ComponentBase {
 										/* 5 - $file_path|$current_file_content */
 										$response_template['file'],
 										/* 6 - $all_keywords */
-										$this->all_keywords
+										$this->all_keywords,
+										/* 7 - $component_name */
+										$this->name()->getName()
 									])
 									: (is_string($value) || is_numeric($value) 
 										? $value 
