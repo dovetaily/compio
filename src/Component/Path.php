@@ -37,7 +37,7 @@ class Path {
 
 					$user_path = !empty($a = $this->config()->get()) && array_key_exists('template', $a) && array_key_exists($key, $a['template']) && array_key_exists('path', $cnf = (function($cnf){
 						if(!is_string($cnf) && is_callable($cnf)) return $cnf();
-						else $cnf;
+						else return $cnf;
 					})($a['template'][$key])) && $cnf['path'] 
 						? $cnf['path']
 						: (!empty($a = $this->config()->getApp()) && array_key_exists('template', $a) && array_key_exists($key, $a['template']) && array_key_exists('path', ($ret = (
