@@ -191,7 +191,7 @@ trait Args {
 				$param_selected = [
 					'{--name--}' => $param_name,
 					'{--type--}' => $param_type,
-					'{--value--}' => $param_value,
+					'{--value--}' => preg_replace('/^\\"(.*)\\"$/', '$1', $param_value),
 					'{--type-name-value--}' => $all,
 					'{--all--}' => $all,
 					'{--type-name--}' => $param_type . ' $' . $param_name . '',
@@ -209,7 +209,7 @@ trait Args {
 
 		}
 
-		$t = !empty($t) ? implode(';', $t) . ';' : null;
+		$t = !empty($t) ? (count($t) > 1 ? implode(';', $t) . ';' : current($t)) : null;
 
 		return $t;
 
