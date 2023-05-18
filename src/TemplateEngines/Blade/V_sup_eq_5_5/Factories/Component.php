@@ -291,7 +291,16 @@ class Component extends ComponentBase {
 
 								if(is_string($value)){
 									$content = $generate_ ? str_replace($key, $value, $content) : '';
-									$datas['keywords'][$key] = ['result' => $value, 'original' => $datas['keywords'][$key]];
+
+									$original = $datas['keywords'][$key];
+
+									if(!isset($datas['keywords'][$key]['original']))
+										$datas['keywords'][$key] = ['result' => $value];
+									else
+										$datas['keywords'][$key]['result'] = $value;
+
+									if(!isset($original['original']))
+										$datas['keywords'][$key]['original'] = $original;
 								}
 								elseif($value === true && $generate_) $content = file_get_contents($response_template['file']);
 
