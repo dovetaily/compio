@@ -127,7 +127,7 @@ class Template {
 				'require' => false,
 				'verif' => 'is_string',
 				'last' => true,
-				'empty' => false
+				'empty' => true
 			],
 			'keywords' => [
 				'require' => false,
