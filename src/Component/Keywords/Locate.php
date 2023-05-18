@@ -33,7 +33,21 @@ trait Locate {
 	 */
 	protected function locate_render(){
 
-		return $this->locate_('render', 'YE@**@!!@&@T!!', function($str){return str_replace(['/', '\\'], '.', $str);});
+		$tt = $this->template()->get('render');
+
+		$res = null;
+
+		if(is_array($tt) && !empty($tt)){
+			$path = current($tt['path']);
+
+			$ext = $tt["file_extension"];
+
+			$sh = array_key_exists('short_path', $tt) ? (is_array($tt['short_path']) ? end($tt['short_path']) : $tt['short_path']) : 'components';
+
+			$res = trim(str_replace(['/', '\\', '..'], '.', ($sh . '.' . $path["short_dirname"] . '.' . preg_replace('/(.*)' . preg_quote($ext) . '$/', '$1', $path["basename"]))), '.');
+		}
+
+		return $res;
 
 	}
 
