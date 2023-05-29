@@ -231,7 +231,7 @@ class Component extends ComponentBase {
 
 				if(file_exists($template_file) && is_readable($template_file) && !empty($datas['path'])){
 
-					$creation_response = $this->createTemplate($template_file, $datas['path']);
+					$creation_response = $this->createTemplate($template_file, $datas['path'], $datas['template_file']);
 					$creation_response = array_key_exists('status_error', $creation_response) 
 						? [$creation_response] 
 						: $creation_response
@@ -291,7 +291,16 @@ class Component extends ComponentBase {
 
 								if(is_string($value)){
 									$content = $generate_ ? str_replace($key, $value, $content) : '';
-									$datas['keywords'][$key] = ['result' => $value, 'original' => $datas['keywords'][$key]];
+
+									$original = $datas['keywords'][$key];
+
+									if(!isset($datas['keywords'][$key]['original']))
+										$datas['keywords'][$key] = ['result' => $value];
+									else
+										$datas['keywords'][$key]['result'] = $value;
+
+									if(!isset($original['original']))
+										$datas['keywords'][$key]['original'] = $original;
 								}
 								elseif($value === true && $generate_) $content = file_get_contents($response_template['file']);
 
@@ -323,12 +332,14 @@ class Component extends ComponentBase {
 	/**
 	 * Creation of template file.
 	 *
-	 * @return string      $template_file
-	 * @return array|null  $copy_template_here
+	 * @param string        $template_file
+	 * @param mixed         $copy_template_here
+	 * @param array|string  $all_template
 	 * @return array
 	 */
-	public function createTemplate(string $template_file, $copy_template_here){
+	public function createTemplate(string $template_file, mixed $copy_template_here, array|string $all_template){
 
+		$all_template = is_array($all_template) ? $all_template : [$all_template];
 		$copy_template_here = is_array($copy_template_here) ? $copy_template_here : [$copy_template_here];
 
 		$t = [];
@@ -343,6 +354,17 @@ class Component extends ComponentBase {
 					'generate' => false
 				];
 				continue;
+			}
+
+			if(!is_numeric($key) && isset($all_template[$key])){
+				if(!file_exists($all_template[$key])){
+					$t[] = [
+						'status_error' => true,
+						'message' => "\t" . 'ERROR : This template file "' . $all_template[$key] . '" not exists. File "' . $value['file'] . '" is not created',
+					];
+					continue;
+				}
+				$template_file = $all_template[$key];
 			}
 
 			if(file_exists($value['dirname']) || mkdir($value['dirname'], 0777, true)){
