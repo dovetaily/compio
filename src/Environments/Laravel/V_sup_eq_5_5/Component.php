@@ -383,7 +383,15 @@ class Component extends Command {
 
 			$name = null;
 
+			$dts = [];
+
 			foreach ($arguments as $name => $val) {
+
+				if(is_string($val) && is_int($name)){ // ['arg_name', 'arg_name1' => 'value', 'arg_name2' => null]
+					$name = $val;
+					$val = null; // ['arg_name' => null, 'arg_name1' => 'value', 'arg_name2' => null] -> arg_name is require
+				}
+				elseif(is_null($val)) $val = \Compio\Component\Arguments::NULL_VALUE; //[..., 'arg_name2' => null] -> arg_name2 is null
 
 				if($Closure !== null){
 
@@ -425,7 +433,12 @@ class Component extends Command {
 					break;
 				}
 
+				$dts[$name] = $val;
+
 			}
+
+			$args = $dts;
+
 			if($args_error === true){
 				$this->error($this->stylize("\t  The arguments name `" . $name . "` of component \"" . $component_name . "\" is not correct ! (^[a-z_\\\\\]+[a-z0-9_\\\\\]+$|^[a-z_\\\\\]+$|^[a-z_]$)  "));
 
