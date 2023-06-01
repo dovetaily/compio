@@ -25,6 +25,51 @@ abstract class Foundation {
 	}
 
 	/**
+	 * Get any path
+	 * 
+	 * @param  int          $back
+	 * @param  string|null  $path
+	 * @return string
+	 */
+	public static function path(int $back, string|null $path = null) : string
+	{
+
+		$d = __DIR__;
+
+		for($i = $back; $i > 0; $i--)
+			$d = dirname($d);
+
+		return $d . (!empty($path) ? '\\' . trim(str_replace('/', '\\', $path), '\\') : null);
+
+	}
+
+	/**
+	 * Get root project path
+	 *
+	 * @param string  $path
+	 * @return string
+	 */
+	public static function getAppDir(string $path = null) : string
+	{
+
+		return self::path(7, $path);
+
+	}
+
+	/**
+	 * Get Compio path
+	 * 
+	 * @param  string|null $path
+	 * @return string
+	 */
+	public static function getCompioDir(string|null $path = null) : string
+	{
+
+		return self::path(4, $path);
+
+	}
+
+	/**
 	 * Get command path
 	 *
 	 * @return void
@@ -42,7 +87,7 @@ abstract class Foundation {
 	 */
 	public static function getKernelPath(){
 
-		return getcwd() . '\app\Console\Kernel.php';
+		return self::getAppDir('\app\Console\Kernel.php');
 
 	}
 
@@ -63,11 +108,11 @@ abstract class Foundation {
 
 				$file_content = file_get_contents($kernel_path);
 
-				$command_path = "getcwd() . '" . (str_replace(getcwd(), '', (dirname($cp) . '\resources\routes.commands.php'))) . "'";
+				$command_path = "'" . self::getCompioDir('src/Environments/Laravel/V_sup_eq_5_5/resources/routes.commands.php') . "'";
 
 				$new_content = preg_replace('/(require base_path[(\s]+\'routes\/console\.php\'[);\s]+)/', 'require_once ' . $command_path . ";\n\t\t$1",$file_content);
 
-				$pattern = '/(' . str_replace(['\\', '.', '(', ')', "'"], ['\\\\', '\.', '\(', '\)', "\'"], "require_once $command_path") . ')/i';
+				$pattern = '/(' . preg_quote("require_once " . $command_path) . ')/i';
 
 				if(((bool) preg_match($pattern, $file_content)) === false){
 
