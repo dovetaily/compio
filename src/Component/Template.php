@@ -129,6 +129,19 @@ class Template {
 				'last' => true,
 				'empty' => true
 			],
+			'keyword_class' => [
+				'require' => false,
+				'verif' => function($value){
+
+					return ((is_string($value) && class_exists($value)) || is_object($value)) && is_subclass_of($value, '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Base')
+						? true
+						: 'La valeur de la clé `keyword_class` n\'est pas une Classe(ou la Classe n\'existe pas) !'
+					;
+
+				},
+				'last' => true,
+				'empty' => false
+			],
 			'keywords' => [
 				'require' => false,
 				'verif' => function($value){
