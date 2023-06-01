@@ -22,10 +22,11 @@ class Component extends ComponentFoundation implements CommandInterface {
 	 *
 	 * @var string
 	 */
-	protected $signature = 'compio:component 
+	protected $signature = 'compio 
 							{component_name? : Component Name (^[a-z_]+[a-z0-9\/_]+$|^[a-z_]$ or use config ^\#([a-z]+)\|([^|]+)}
 							{args?* : Your arguments for the class (ex. my_arg=default_value my_second_arg my_xx_arg="Hello world")}
 							{--replace= : Replace the component if it exists (\'true\' for replace, ignore with \'false\')}
+							{--d|data : Generate more data}
 							';
 
 	/**
@@ -47,7 +48,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 		$c = $this->getTemplateEngineSelected('foundation');
 
 		if($this->argument('component_name') === null)
-			parent::initDatas($c);
+			parent::initDatas($c, $this->option('data'));
 		else
 			$this->initDatas($c);
 
@@ -64,7 +65,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 	 *
 	 * @return void
 	 */
-	protected function initDatas($class_) : void{
+	protected function initDatas($class_, bool $data_generator = false) : void{
 
 		$app_config = $this->getAppConfig();
 
@@ -82,7 +83,7 @@ class Component extends ComponentFoundation implements CommandInterface {
 
 		if(empty($component_name['match'])){
 			// $component_name['name'] // name conversion
-			$this->initDatasWithCommand($class_::component(), array_key_exists('name', $component_name) ? $component_name['name'] : $component_name_arg, $arguments, $app_config);
+			$this->initDatasWithCommand($class_::component($this->option('data')), array_key_exists('name', $component_name) ? $component_name['name'] : $component_name_arg, $arguments, $app_config);
 
 		}
 		else{
@@ -112,7 +113,8 @@ class Component extends ComponentFoundation implements CommandInterface {
 
 			}
 
-
+			$this->data_generator = $this->option('data');
+			
 			if($match[0] == 'config') $this->initDatasWithConfig($match[1], $class_, $app_config, in_array(trim(($rr = $this->option('replace'))), ['true', 'false']) ? ($rr = $rr == 'true' ? true : false) : null);
 			else $this->error($this->stylize("\t  Alternative `" . $match[0] . "`(" . $str . ") is not supported !  "));
 

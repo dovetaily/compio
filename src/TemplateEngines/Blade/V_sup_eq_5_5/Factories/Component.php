@@ -6,6 +6,10 @@ use Compio\Component\ComponentBase;
 use Compio\Traits\Factory;
 use Compio\Traits\Singleton;
 
+use Illuminate\Support\Str;
+
+use Compio\Environments\Laravel\V_sup_eq_5_5\Foundation;
+
 class Component extends ComponentBase {
 
 	use Singleton;
@@ -32,75 +36,371 @@ class Component extends ComponentBase {
 	/**
 	 * Create a new Compio\TemplateEngines\Blade\V_sup_eq_5_5\Factories\Component instance.
 	 *
+	 * @param bool  $data_generator
 	 * @return void
 	 */
-	public function __construct(){
+	public function __construct(bool $data_generator = false){
 
-		$this->initConfig();
+		$this->initConfig($data_generator);
 
 	}
 
 	/**
 	 * Initialize configuration datas.
 	 *
+	 * @param bool  $data_generator
 	 * @return void
 	 */
-	public function initConfig(){
-		$this->config()::setDefault([
-			'template' => [
-				'class' => [
-					'path' => $this->getRootPath() . '\app\View\Components',
-					'template_file' => dirname(__DIR__) . '\resources\component\class.php',
-					'generate' => true,
-					'convert_case' => 'uf',
-					'keywords' => [
-						'@command',
-						'@namespace',
-						'@class_name',
-						'@locate_css',
-						'@locate_js',
-						'@locate_render',
-						'@args_init',
-						'@args_params',
-						'@args_construct',
-						'@args_render',
+	public function initConfig(bool $data_generator = false){
+		$dt = $data_generator
+			? [
+				'template' => [
+					'migration' => [
+						'path' => Foundation::getAppDir('\database\migrations'),
+						'template_file' => dirname(__DIR__) . '\resources\data\migration.compio',
+						'generate' => true,
+						'convert_case' => 'd',
+						// 'convert_case' => ['camel', 'uf'],
+						'change_file' => function(array $path_info){
+							// $path_info['filename'] = '2023_03_26_212151_create_' . Str::snake(Str::plural($path_info['filename'])) .'_table';
+							$path_info['filename'] = date('Y_m_d_His') . '_create_' . Str::snake(Str::plural($path_info['filename'])) .'_table';
+							sleep(1);
+							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
+							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							return $path_info;
+						},
+						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Migration',
+						'keywords' => [
+							'@class_name',
+							'@migration_extends',
+							'@migration_implements',
+							'@migration_import_trait',
+							'@migration_table',
+							'@migration_column',
+							'@migration_foreign',
+							'@migration_properties',
+							'@migration_import_class',
+						]
+					],
+					'model' => [
+						'path' => Foundation::getAppDir('\app\Models'),
+						'template_file' => dirname(__DIR__) . '\resources\data\model.compio',
+						'generate' => true,
+						// 'convert_case' => 'camel',
+						'convert_case' => ['camel', 'uf'],
+						'change_file' => function(array $path_info){
+							$path_info['filename'] = Str::singular($path_info['filename']);
+							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
+							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							return $path_info;
+						},
+						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Model',
+						'keywords' => [
+							'@class_name',
+							'@model_namespace',
+							'@model_class',
+							'@model_full_class',
+							'@model_fillable',
+							'@model_hidden',
+							'@model_casts',
+							'@model_extends',
+							'@model_implements',
+							'@model_import_trait',
+							'@model_belongs_to',
+							'@model_has_one',
+							'@model_has_many',
+							'@model_properties',
+							'@model_methods',
+							'@model_import_class',
+						]
+					],
+					'factory' => [
+						'path' => Foundation::getAppDir('\database\factories'),
+						'template_file' => dirname(__DIR__) . '\resources\data\\' . (version_compare(\Illuminate\Foundation\Application::VERSION, '8', '>=') ? 'factory.v.sup.8.compio' : 'factory.compio'),
+						'generate' => true,
+						'convert_case' => ['camel', 'uf'],
+						'change_file' => function(array $path_info){
+							$path_info['filename'] = Str::singular($path_info['filename']) . 'Factory';
+							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
+							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							return $path_info;
+						},
+						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Factory',
+						'keywords' => [
+							'@factory_namespace',
+							'@factory_class',
+							'@factory_full_class',
+							'@model_full_class',
+							'@model_class',
+							'@factory_implements',
+							'@factory_import_trait',
+							'@factory_definition',
+							'@factory_import_class',
+						]
+					],
+					'seeder' => [
+						'path' => Foundation::getAppDir('\database\\' . (version_compare(\Illuminate\Foundation\Application::VERSION, '8', '>=') ? 'seeders' : 'seeds')),
+						'template_file' => dirname(__DIR__) . '\resources\data\seeder.compio',
+						'generate' => true,
+						'convert_case' => ['camel', 'uf'],
+						'change_file' => function(array $path_info){
+							$path_info['filename'] = Str::singular($path_info['filename']) . 'TableSeeder';
+							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
+							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							return $path_info;
+						},
+						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Seeder',
+						'keywords' => [
+							'@seeder_namespace',
+							'@seeder_class',
+							'@seeder_full_class',
+							'@model_full_class',
+							'@model_class',
+							'@seeder_extends',
+							'@seeder_implements',
+							'@seeder_import_trait',
+							'@seeder_seed',
+							'@seeder_import_class'
+						]
+					],
+					'repository' => [
+						'path' => Foundation::getAppDir('\app\Repositories'),
+						'template_file' => dirname(__DIR__) . '\resources\data\repository.compio',
+						'generate' => true,
+						'convert_case' => ['camel', 'uf'],
+						'change_file' => function(array $path_info){
+							$path_info['filename'] = Str::singular($path_info['filename']) . 'Repository';
+							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
+							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							return $path_info;
+						},
+						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Repository',
+						'keywords' => [
+							'@repository_namespace',
+							'@repository_class',
+							'@repository_full_class',
+							'@model_full_class',
+							'@model_class',
+							'@repository_extends',
+							'@repository_implements',
+							'@repository_import_trait',
+							'@repository_methods',
+							'@repository_import_class',
+						]
+					],
+					'resource' => [
+						'path' => Foundation::getAppDir('\app\Http\Resources'),
+						'template_file' => dirname(__DIR__) . '\resources\data\resource.compio',
+						'generate' => true,
+						'convert_case' => ['camel', 'uf'],
+						'change_file' => function(array $path_info){
+							$path_info['filename'] = Str::singular($path_info['filename']) . 'Resource';
+							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
+							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							return $path_info;
+						},
+						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Resource',
+						'keywords' => [
+							'@resource_namespace',
+							'@resource_class',
+							'@resource_full_class',
+							'@resource_extends',
+							'@resource_implements',
+							'@resource_import_trait',
+							'@resource_collects',
+							'@resource_wrap',
+							'@resource_datas',
+							'@resource_import_class',
+						]
+					],
+					'request' => [
+						'path' => [Foundation::getAppDir('\app\Http\Requests'), Foundation::getAppDir('\app\Http\Requests')],
+						'template_file' => dirname(__DIR__) . '\resources\data\request.compio',
+						'generate' => true,
+						'convert_case' => ['camel', 'uf'],
+						'change_file' => function(array $path_info, $file_index, $all_template_path){
+							// $path_info['filename'] = Str::singular($path_info['filename']) . ($file_index === 0 ? 'Update' : ($file_index === 1 ? 'Store' : null)) . 'Request';
+							$path_info['filename'] = Str::singular($path_info['filename']) . ($file_index === 0 ? 'Store' : ($file_index === 1 ? 'Update' : null)) . 'Request';
+							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
+							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							return $path_info;
+						},
+						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Request',
+						'keywords' => [
+							'@model_full_class',
+							'@model_class',
+							'@model_namespace',
+							'@request_namespace',
+							'@request_class',
+							'@request_full_class',
+							'@request_extends',
+							'@request_implements',
+							'@request_import_trait',
+							'@request_datas',
+							'@request_authorize',
+							'@request_import_class',
+						]
+					],
+					'controller' => [
+						'path' => [Foundation::getAppDir('\app\Http\Controllers\Api\V1'), Foundation::getAppDir('\app\Http\Controllers')],
+						'template_file' => dirname(__DIR__) . '\resources\data\controller.compio',
+						'generate' => true,
+						'convert_case' => ['camel', 'uf'],
+						'change_file' => function(array $path_info){
+							$path_info['filename'] = Str::singular($path_info['filename']) . 'Controller';
+							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
+							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							return $path_info;
+						},
+						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Controller',
+						'keywords' => [
+							'@model_full_class',
+							'@model_class',
+							'@repository_full_class',
+							'@repository_class',
+							'@resource_namespace',
+							'@resource_full_class',
+							'@resource_class',
+							'@request_namespace',
+							'@request_full_class',
+							'@request_class',
+							'@controller_namespace',
+							'@controller_class',
+							'@controller_full_class',
+							'@controller_extends',
+							'@controller_implements',
+							'@controller_import_trait',
+							'@controller_properties',
+							'@controller_methods',
+							'@controller_import_class'
+						]
+					],
+					'page' => [
+						'path' => ['index' => ($pt = Foundation::getAppDir('\resources\views\pages')), 'create' => $pt, 'show' => $pt, 'edit' => $pt, 'find' => $pt],
+
+						'template_file' => [
+							'index' => dirname(__DIR__) . '\resources\data\page\index.blade',
+							'create' => dirname(__DIR__) . '\resources\data\page\create.blade',
+							'show' => dirname(__DIR__) . '\resources\data\page\show.blade',
+							'edit' => dirname(__DIR__) . '\resources\data\page\edit.compio',
+							'find' => dirname(__DIR__) . '\resources\data\page\find.compio',
+							dirname(__DIR__) . '\resources\data\page.compio'
+						],
+						'generate' => true,
+						'convert_case' => 'd',
+						// 'convert_case' => ['camel', 'uf'],
+						'change_file' => function($path_info, $key, $component){
+							$path_info['dirname'] .= '\\' . $path_info['filename'];
+							$path_info['extension'] = 'blade.php';
+							$path_info['filename'] = $key;
+							// $path_info['filename'] = Str::singular($path_info['filename']);
+							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
+							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							return $path_info;
+						},
+						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Page',
+						'keywords' => [
+							'@all_button_title',
+							'@create_button_title',
+							'@route',
+							'@class_html',
+							'@content',
+							'@additional',
+							'@page_layout',
+							'@page_title',
+							'@locate_css',
+							'@locate_js'
+						]
+					],
+				],
+
+
+				'keyword' => [
+					'__eloquentSoftDeletes' => 'Illuminate\Database\Eloquent\SoftDeletes',
+					'__eloquentHasOne' => 'Illuminate\Database\Eloquent\Relations\HasOne',
+					'__eloquentHasMany' => 'Illuminate\Database\Eloquent\Relations\HasMany',
+					'__eloquentBelongsTo' => 'Illuminate\Database\Eloquent\Relations\BelongsTo',
+					'__eloquentModel' => 'Illuminate\Database\Eloquent\Model',
+					'__model' => 'Illuminate\Database\Eloquent\Model',
+					'__eloquentDBCollection' => 'Illuminate\Database\Eloquent\Collection',
+				],
+				'default_column_type' => 'string',
+				'foreign_default' => [
+					'foreign_property' => version_compare(\Illuminate\Foundation\Application::VERSION, '8', '>=') ? ['foreignId' => '#'] : ['unsignedBigInteger' => '#'],
+					'modifiers' => [],
+					// 'modifiers' => 'nullable',
+				],
+
+
+				'require_template' => false,
+				'replace_component_exist' => false,
+			] 
+			: [
+				'template' => [
+					'class' => [
+						'path' => $this->getRootPath() . '\app\View\Components',
+						'template_file' => dirname(__DIR__) . '\resources\component\class.php',
+						'generate' => true,
+						'convert_case' => 'uf',
+						'keywords' => [
+							'@command',
+							'@namespace',
+							'@class_name',
+							'@locate_css',
+							'@locate_js',
+							'@locate_render',
+							'@args_init',
+							'@args_params',
+							'@args_construct',
+							'@args_render',
+						]
+					],
+					'render' => [
+						'path' => $this->getRootPath() . '\resources\views\components',
+						'file_extension' => 'blade.php',
+						'short_path' => 'components',
+						'template_file' => dirname(__DIR__) . '\resources\component\render.php',
+						'generate' => true,
+						'keywords' => [
+							'@component_name',
+							'@class_html',
+						]
+					],
+					'css' => [
+						'path' => $this->getRootPath() . '\public\css\components',
+						'file_extension' => 'css',
+						'short_path' => 'css\components',
+						'template_file' => dirname(__DIR__) . '\resources\component\css.php',
+						'generate' => true,
+						'keywords' => [
+							'@class_html',
+						]
+					],
+					'js' => [
+						'path' => $this->getRootPath() . '\public\js\components',
+						'file_extension' => 'js',
+						'short_path' => 'js\components',
+						'template_file' => dirname(__DIR__) . '\resources\component\js.php',
+						'generate' => true,
+						'keywords' => [
+							'@class_html',
+						]
 					]
 				],
-				'render' => [
-					'path' => $this->getRootPath() . '\resources\views\components',
-					'file_extension' => 'blade.php',
-					'short_path' => 'components',
-					'template_file' => dirname(__DIR__) . '\resources\component\render.php',
-					'generate' => true,
-					'keywords' => [
-						'@component_name',
-						'@class_html',
-					]
-				],
-				'css' => [
-					'path' => $this->getRootPath() . '\public\css\components',
-					'file_extension' => 'css',
-					'short_path' => 'css\components',
-					'template_file' => dirname(__DIR__) . '\resources\component\css.php',
-					'generate' => true,
-					'keywords' => [
-						'@class_html',
-					]
-				],
-				'js' => [
-					'path' => $this->getRootPath() . '\public\js\components',
-					'file_extension' => 'js',
-					'short_path' => 'js\components',
-					'template_file' => dirname(__DIR__) . '\resources\component\js.php',
-					'generate' => true,
-					'keywords' => [
-						'@class_html',
-					]
-				]
-			],
-			'require_template' => false,
-			'replace_component_exist' => null,
-		]);
+				'require_template' => false,
+				'replace_component_exist' => null,
+			]
+		;
+		$this->config()::setDefault($dt);
 	}
 
 	/**
@@ -239,6 +539,8 @@ class Component extends ComponentBase {
 
 					$keywords = $datas['keywords'];
 
+					$keyword_class = isset($datas['keyword_class']) ? new $datas['keyword_class'] : null;
+
 					foreach ($creation_response as $key => $response_template) {
 
 						$generate_ = !(isset($response_template['generate']) && $response_template['generate'] === false);
@@ -250,41 +552,60 @@ class Component extends ComponentBase {
 
 							foreach ($keywords as $key => $value) {
 
+								$datas_call_keyword = is_array($value) ? [
+									/* 0 - $default_value */
+									(array_key_exists('default_value', $value) && (is_numeric($value['default_value']) || is_string($value['default_value']) || (is_array($value['default_value']) && isset($value['default_value'][$key])))
+										? (is_array($value['default_value'])
+											? $value['default_value'][$key]
+											: $value['default_value']
+										)
+										: null
+									),
+								] : [$value];
+
+								$datas_call_keyword = array_merge($datas_call_keyword, [
+									/* 1 - $template_datas */
+									$datas,
+									/* 2 - $arguments */
+									(!empty($a = $this->arguments()->get())
+										? $a
+										: []
+									),
+									/* 3 - callback_format_value */
+									function($value, $type = null, $equal = ' = '){
+										return \Compio\Traits\ArgumentFormat::format_value($value, $type, $equal);
+									},
+									/* 4 - $file_content */
+									$content,
+									/* 5 - $file_path|$current_file_content */
+									$response_template['file'],
+									/* 6 - $all_keywords */
+									$this->all_keywords,
+									/* 7 - $component_name */
+									$this->name()->getName()
+								]);
+
+								preg_match('/^@(.*)/', $key, $m__);
+
+								$method__ = end($m__);
+
+								if(!is_null($keyword_class) && method_exists($keyword_class, $method__)){
+
+									$keyword_class->__329732_config__9882832(...array_merge($datas_call_keyword, [$type, $this->config()->getMerge()]));
+									$value = $keyword_class->$method__(...$datas_call_keyword);
+
+								}
+
+								else{
+
 								$value = is_array($value) && array_key_exists('callable', $value)
-									? $value['callable'](...[
-										/* 0 - $default_value */
-										(array_key_exists('default_value', $value) && (is_numeric($value['default_value']) || is_string($value['default_value']) || (is_array($value['default_value']) && isset($value['default_value'][$key])))
-											? (is_array($value['default_value'])
-												? $value['default_value'][$key]
-												: $value['default_value']
-											)
-											: null
-										),
-										/* 1 - $template_datas */
-										$datas,
-										/* 2 - $arguments */
-										(!empty($a = $this->arguments()->get())
-											? $a
-											: []
-										),
-										/* 3 - callback_format_value */
-										function($value, $type = null, $equal = ' = '){
-											return \Compio\Traits\ArgumentFormat::format_value($value, $type, $equal);
-										},
-										/* 4 - $file_content */
-										$content,
-										/* 5 - $file_path|$current_file_content */
-										$response_template['file'],
-										/* 6 - $all_keywords */
-										$this->all_keywords,
-										/* 7 - $component_name */
-										$this->name()->getName()
-									])
+									? $value['callable'](...$datas_call_keyword)
 									: (is_string($value) || is_numeric($value) 
 										? $value 
 										: null
 									)
 								;
+								}
 
 								if(empty($this->all_keywords)) $this->all_keywords[$type] = [$key => is_bool($value) ? $keywords[$key] : $value];
 								else $this->all_keywords[$type][$key] = is_bool($value) ? $keywords[$key] : $value;

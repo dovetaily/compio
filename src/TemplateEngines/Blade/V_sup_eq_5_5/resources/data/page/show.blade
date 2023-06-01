@@ -1,0 +1,46 @@
+@php
+Plateform::addCss(...[(file_exists($f = resource_path('css/tailwind.min-2.2.2.css')) ? $f : 'http://cdn.net/css/tailwind.min-2.2.2.css'), @locate_css]);
+Plateform::addJs(...[(file_exists($f = resource_path('js/jquery-3.6.0.min.js')) ? $f : 'http://cdn.net/js/jquery-3.6.0.min.js'), @locate_js]);@additional
+
+$btn = [];
+foreach ([
+	'edit' => ['title' => 'Edit', 'border' => '2 blue-400', 'color' => 'hover:color-black bg-blue-400 bg-opacity-30 hover:bg-opacity-100', 'link' => route('@route.edit', [$datas->id])],
+	'delete' => ['title' => 'Delete', 'border' => '2 red-600', 'color' => 'hover:color-white bg-red-600 bg-opacity-30 hover:bg-opacity-100', 'link' => route('@route.destroy', [$datas->id])],
+	'create' => ['title' => 'Create new @create_button_title', 'border' => '2 green-400', 'color' => 'hover:color-black bg-green-400 bg-opacity-30 hover:bg-opacity-100', 'link' => route('@route.create')],
+	'all' => ['title' => 'All @all_button_title', 'border' => '2 color-black dark:color-white', 'color' => 'hover:color-white dark:hover:color-black bg-color-black dark:bg-color-white bg-color-opacity-30 dark:bg-color-opacity-30 hover:bg-color-opacity-100 dark:hover:bg-color-opacity-100', 'link' => route('@route.index')],
+] as $kk => $datas_cmp){
+	$btn[$kk] = component('buttons.sample', array_merge([
+		'class' => 'p-4',
+		'opacity' => '',
+	], $datas_cmp), true);
+}
+@endphp
+
+<x-layouts.@page_layout :title="@page_title">
+	<div class="@class_html">
+		<div class="my-4 flex flex-wrap justify-center items-center">
+			{!! $btn['edit'] . "\n" . $btn['delete'] !!}
+		</div>
+		<div class="flex flex-wrap p-4 md:p-8">
+			@foreach($datas->toArray() as $key => $value)
+				@php
+					$k = preg_match('/(.*)_id$/i', $key, $m)
+						? ['link' => route(end($m) . '.show', [(is_null($datas->$key) ? '' : $datas->$key)]), 'text' => end($m)]
+						: $key
+					;
+					if(is_object($val = $datas->{$key}) && get_class($val) == 'Illuminate\Support\Carbon'){
+						$value = implode(' ', [$val->dayName, $val->monthName, $val->day . ',', $val->year], );
+						$k = preg_match('/(.*)_at$/i', $key, $m) ? end($m) : $k;
+					}
+				@endphp
+				<div class="item-e092ej w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4 sm:p-6 md:p-8 lg:p10 space-y-4 border-color-white-5 border-dashed- dark:border-color-black-5">
+					<div class="title-9h2e"><h3 class="ff-Brandon-Bold text-3xl">{{ is_array($k) ? $k['text'] : $k }}</h3></div>
+					<div class="content-e9j2"><p class="inline-block"><a class="flex items-center space-x-2 opacity-60 hover:opacity-90" target="__blank" {!! is_array($k) ? 'href="' . $k['link'] . '"' : null !!}><span class="ff-Brandon text-lg">{{ strlen($value) > 300 ? $value . '...' : $value }}</span>@if(is_array($k)) <span class="inline-block w-5 h-5">{!! file_get_contents('http://cdn.net/icon/svg/icons8_forward_arrow.svg') !!}</span> @endif</a></p></div>
+				</div>
+			@endforeach
+		</div>
+		<div class="flex flex-wrap justify-center items-center">
+			{!! $btn['create'] . "\n" . $btn['all'] !!}
+		</div>
+	</div>
+</x-layouts.@page_layout>

@@ -1,0 +1,10 @@
+@php
+Plateform::addCss(...[(file_exists($f = resource_path('css/tailwind.min-2.2.2.css')) ? $f : 'http://cdn.net/css/tailwind.min-2.2.2.css'), @locate_css]);
+Plateform::addJs(...[(file_exists($f = resource_path('js/jquery-3.6.0.min.js')) ? $f : 'http://cdn.net/js/jquery-3.6.0.min.js'), @locate_js]);@additional
+@endphp
+
+<x-layouts.@page_layout :title="@page_title">
+	<div class="@class_html">
+		@content
+	</div>
+</x-layouts.@page_layout>
