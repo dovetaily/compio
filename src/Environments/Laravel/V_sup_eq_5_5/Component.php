@@ -42,6 +42,13 @@ class Component extends Command {
 	protected $template_engine_selected;
 
 	/**
+	 * [$data_generator description]
+	 * 
+	 * @var boolean
+	 */
+	protected $data_generator = false;
+
+	/**
 	 * Generate template
 	 *
 	 * @param  object  $template_engine
@@ -184,8 +191,9 @@ class Component extends Command {
 	 *
 	 * @return void
 	 */
-	protected function initDatas($class_) : void{
+	protected function initDatas($class_, bool $data_generator = false) : void{
 
+		$this->data_generator = $data_generator;
 
 		$app_config = $this->getAppConfig();
 
@@ -193,7 +201,7 @@ class Component extends Command {
 
 		if(empty($component_type_name['match'])){
 			// $component_type_name['name']  = ''; // name conversion
-			$this->initDatasWithInput($class_::component(), $component_type_name['name'], $app_config);
+			$this->initDatasWithInput($class_::component($this->data_generator), $component_type_name['name'], $app_config);
 
 		}
 		else{
@@ -271,7 +279,8 @@ class Component extends Command {
 
 					if(array_key_exists('name', $value) && is_string($value['name']) && !empty($value['name'])){
 
-						$template_engine = $class_::component();
+						$template_engine = $class_::component($this->data_generator);
+
 						$template_engine->config()->setApp($this->getTemplateConfig($app_config));
 
 						$value['name'] =  $this->getComponentNameVerify(ComponentName::getPatterns('name'), $this->mergeCharactersDuplicate($value['name']));
