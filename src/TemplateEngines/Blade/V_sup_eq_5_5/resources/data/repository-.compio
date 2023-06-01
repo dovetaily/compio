@@ -1,0 +1,73 @@
+<?php
+
+namespace @repository_namespace;
+
+use @model_full_class;
+@repository_import_class
+
+class @repository_class@repository_extends@repository_implements
+{
+
+	/**
+	 * @var @model_class
+	 */
+
+	protected $commune;
+
+	/**
+	 * @repository_class constructor.
+	 *
+	 * @param @model_full_class  $commune
+	 */
+	public function __construct(@model_class $commune = null) {
+		$this->commune = $commune ?? new @model_class();
+	}
+
+
+	/**
+	 * Get all commune
+	 * @return Collection / static[]
+	 *
+	 */
+	public function getAll() {
+		return $this->commune->all();
+	}
+
+	/**
+	 * Get commune by id
+	 * @param int $id
+	 * @return Commune
+	 */
+	public function getById(int $id) {
+		return $this->commune->findOrFail($id);
+	}
+
+	/**
+	 * store an new instance of Commune
+	 * @param array $data
+	 * @return Commune
+	 */
+	public function store(array $data) {
+		return $this->commune->create($data);
+	}
+
+	/**
+	 * update an instance of Commune
+	 * @param array $data
+	 * @param int $id
+	 * @return Commune
+	 */
+	public function update(array $data, int $id) {
+		return $this->commune->findOrFail($id)->update($data);
+	}
+
+	/**
+	 * delete a commune
+	 * @param int $id
+	 * @return Commune
+	 */
+	public function delete(int $id) {
+		return $this->commune->findOrFail($id)->delete();
+	}
+
+}

@@ -1,0 +1,97 @@
+@php
+Plateform::addCss(...[(file_exists($f = resource_path('css/tailwind.min-2.2.2.css')) ? $f : 'http://cdn.net/css/tailwind.min-2.2.2.css'), @locate_css]);
+Plateform::addJs(...[(file_exists($f = resource_path('js/jquery-3.6.0.min.js')) ? $f : 'http://cdn.net/js/jquery-3.6.0.min.js'), @locate_js]);@additional
+
+$vfun = function($data){
+	$keys = array_keys($data->toArray());
+	$t = [];
+	foreach ($keys as $k)
+		if(preg_match('/(.*)_id$/i', $k, $m)){
+			$t[$k] = ['link' => route(end($m) . '.show', [(is_null($data->$k) ? '' : $data->$k)]), 'text' => $data->$k];
+		}
+		elseif($k == 'id')
+			$t[$k] = ['link' => route('@route.show', [(is_null($data->$k) ? '' : $data->$k)]), 'text' => $data->$k, 'id' => $data->$k];
+		else
+			if (is_object($val = $data->$k) && get_class($val) == 'Illuminate\Support\Carbon')
+				$t[$k] = implode(' ', [$val->dayName, $val->monthName, $val->day . ',', $val->year], );
+			else $t[$k] = $data->$k;
+	return $t;
+};
+$buttons = [
+	'tables.tab' => function($id, $data){
+		$univ = ['pd' => 'x-2 y-2', 'cl' => 'bg-opacity-30 hover:bg-opacity-100', 'bd' => ''];
+		return [
+			[
+				'padding' => $univ['pd'],
+				'color' => 'bg-yellow-500 '. $univ['cl'],
+				'border' => $univ['bd'],
+				'icon' => [
+					'dimension' => 'w-4 h-4',
+					'file' => 'http://cdn.net/icon/svg/icons8_edit.svg'
+				],
+				'opacity' => '',
+				'link' => route('@route.edit', [$id]),
+			],
+			[
+				'padding' => $univ['pd'],
+				'color' => 'bg-red-500 '. $univ['cl'],
+				'border' => $univ['bd'],
+				'icon' => [
+					'dimension' => 'w-4 h-4',
+					'file' => 'http://cdn.net/icon/svg/icons8_trash_can.svg'
+				],
+				'opacity' => '',
+				'link' => route('@route.destroy', [$id]),
+			],
+		];
+	},
+	'inputs.texa' => [
+		'padding' => '',
+		'color' => '',
+		'icon' => ['file' => 'http://cdn.net/icon/svg/icons8_fluent_search.svg', 'dimension' => 'w-4 h-4', ],
+		'border' => '',
+		'opacity' => '',
+	],
+];
+$b_nav = [
+	'icon' => [],
+	'padding' => 'x-2 y-2',
+	'color' => '',
+	'border' => 'border-2',
+	'opacity' => '',
+];
+
+$head_table = array_map(function($v){preg_match('/^(.*)_id$|.*/', $v, $m); return end($m); }, array_keys($datas->first()->toArray()));
+@endphp
+
+<x-layouts.@page_layout :title="@page_title">
+	<div class="@class_html">
+		<div class="p-10">
+			<x-tables.tab class="dark:bg-color-black-5" bg-head="bg-color-white dark:bg-color-black-5" :head="$head_table" :datas="$datas" :function="$vfun" :buttons="$buttons['tables.tab']">
+				<x-slot name="header">
+					<div class="flex items-center justify-between mb-4 space-x-3">
+						<div class="inline-block">
+							<div class="flex items-center justify-between space-x-2">
+								@php echo component('buttons.sample', array_merge($b_nav, ['link' => $datas->previousPageUrl(), 'opacity' => (empty($datas->previousPageUrl()) ? '30' : ''), 'icon' => ['file' => 'http://cdn.net/icon/svg/icons8_back.svg']]));  @endphp
+								<div class="">
+									<select class="dark:bg-color-white dark:color-black px-5 py-2 rounded-full w-10- h-10- text-center appearance-none cursor-pointer ff-Brandon-Bold" onchange="window.location.href = this.value;">
+										@for($i = 0; $i < $datas->lastPage(); $i++)
+											<option class="" value="{{ $datas->url($i + 1) }}" @if(($i + 1) == $datas->currentPage()) selected @endif>Page {{ ($i + 1) }}</option>
+										@endfor
+									</select>
+								</div>
+								@php echo component('buttons.sample', array_merge($b_nav, ['link' => $datas->nextPageUrl(), 'opacity' => (empty($datas->nextPageUrl()) ? '30' : ''), 'icon' => ['file' => 'http://cdn.net/icon/svg/icons8_forward.svg']]));  @endphp
+							</div>
+						</div>
+						<div class="">
+							<x-inputs.texa name="search_@route" border="border-2" input-padding="" space-x="3" holder="Search..." fonts="ff-Brandon-Bold text-base" padding="x-6 y-2" opacity="" :button="$buttons['inputs.texa']" color="" place-holder="" input-color="dark:color-white bg-transparent"/>
+						</div>
+					</div>
+				</x-slot>
+				<div class="flex justify-end mt-8">
+					<x-buttons.sample title="Add" opacity="" :link="route('@route.create')" border="2 green-600" color="bg-green-600 hover:bg-green-400 text-white" :icon="['file' => 'http://cdn.net/icon/svg/icons8_plus_math.svg', 'dimension' => 'w-4 h-4']"/>
+				</div>
+			</x-tables.tab>
+		</div>
+	</div>
+</x-layouts.@page_layout>
