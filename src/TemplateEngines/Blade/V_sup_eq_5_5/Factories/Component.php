@@ -539,7 +539,25 @@ class Component extends ComponentBase {
 
 					$keywords = $datas['keywords'];
 
-					$keyword_class = isset($datas['keyword_class']) ? new $datas['keyword_class'] : null;
+					$keyword_class = isset($datas['keyword_class']) 
+						? (is_array($datas['keyword_class']) 
+							? (is_string($value = end($datas['keyword_class'])) && class_exists($value) && is_subclass_of($value, '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Base')
+								? new $value
+								: (is_object($value) && is_subclass_of($value, '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Base')
+									? $value
+									: null
+								)
+							) 
+							: (is_object($datas['keyword_class'])
+								? $datas['keyword_class']
+								: (is_string($datas['keyword_class'])
+									? new $datas['keyword_class']
+									: null
+								)
+							)
+						)
+						: null
+					;
 
 					foreach ($creation_response as $key => $response_template) {
 

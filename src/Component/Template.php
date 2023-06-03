@@ -140,7 +140,7 @@ class Template {
 
 				},
 				'last' => true,
-				'empty' => false
+				'empty' => true
 			],
 			'keywords' => [
 				'require' => false,
