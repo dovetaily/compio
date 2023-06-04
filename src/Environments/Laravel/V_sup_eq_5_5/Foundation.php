@@ -138,15 +138,15 @@ abstract class Foundation {
 	 */
 	public static function init_config(){
 
-		$config_file_path = config_path('compio.php');
+		$config_file_path = Compio::adaptPath(config_path('compio.php'));
 
 		if(!file_exists($config_file_path)){
 
-			$config_path = dirname($config_file_path);
+			$config_path = Compio::adaptPath(dirname($config_file_path));
 
 			if(file_exists($config_path) || mkdir($config_path, 0777, true)){
 
-				$template_config_file = __DIR__ . '\resources\config.php';
+				$template_config_file = Compio::adaptPath(__DIR__ . '\resources\config.php');
 
 				if(copy($template_config_file, $config_file_path)) echo "\n\t  ~ The configuration file `" . $config_file_path . "` has been created !\n";
 				else echo "\n\t  ~ Error ! Le fichier ne peut être créé !\n";
