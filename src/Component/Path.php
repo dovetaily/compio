@@ -78,6 +78,8 @@ class Path {
 					: 'lower'
 				;
 
+				$value['change_file'] = is_array($value['change_file']) ? end($value['change_file']) : $value['change_file'];
+
 				$this->addPath($key, $value['path'], $ext, (isset($value['change_file']) && !is_string($value['change_file']) && is_callable($value['change_file']) ? $value['change_file'] : null), $convert_case);
 
 				$this->mergeWithTemplate('path', $key, $this->paths[$key]);
