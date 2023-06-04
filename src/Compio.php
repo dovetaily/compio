@@ -32,4 +32,21 @@ class Compio {
 		return __DIR__;
 
 	}
+
+	/**
+	 * Returning a file path adapted according to the type of operating system
+	 * 
+	 * @param  string $path
+	 * @param  string $os
+	 * @return string
+	 */
+	public static function adaptPath(string $path, string $os = '') : string
+	{
+		$os = empty($os) ? PHP_OS_FAMILY : $os;
+		return preg_match('/window[s]/i', $os)
+			? str_replace('/', '\\', $path)
+			: str_replace('\\', '/', $path)
+		;
+	}
+
 }
