@@ -5,7 +5,19 @@ use Illuminate\Support\Str;
 
 trait Helpers {
 
-	public function propertyStructure(string $name, $description = null, $access = null, $type = null, $value = null, string $tab = ""){
+	/**
+	 * Returns a structured string for properties of a class
+	 * 
+	 * @param  string             $name
+	 * @param  array|string|null  $description
+	 * @param  string|null        $access
+	 * @param  string|null        $type
+	 * @param  string|null        $value
+	 * @param  string             $tab
+	 * @return string
+	 */
+	public function propertyStructure(string $name, $description = null, $access = null, $type = null, $value = null, string $tab = "") : string
+	{
 		$model = "{{@description}}{{@access}}{{@type}}{{@name}}{{@value}}";
 		$description = is_string($description) ? trim($description) : $description;
 		$description = is_array($description)
@@ -44,7 +56,21 @@ trait Helpers {
 		// code...
 	}
 
-	public function functionStructure(string $name, $description = null, $access = null, $args = null, $type = null, $code = null, $return_ = null, string $tab = ""){
+	/**
+	 * Returns a structured string for the methods of a class or a simple function
+	 * 
+	 * @param  string             $name
+	 * @param  array|string|null  $description
+	 * @param  string|null        $access
+	 * @param  array|string|null  $args
+	 * @param  array|string|null  $type
+	 * @param  array|string|null  $code
+	 * @param  string|null        $return_
+	 * @param  string             $tab
+	 * @return string
+	 */
+	public function functionStructure(string $name, $description = null, $access = null, $args = null, $type = null, $code = null, $return_ = null, string $tab = "") : string
+	{
 		$model = "{{@description}}{{@access}}function {{@name}}({{@args}}) {{@type}}\n{{{@code}}{{@return}}\n}";
 		$description = is_string($description) ? trim($description) : $description;
 		$description = is_array($description)
@@ -98,7 +124,15 @@ trait Helpers {
 		return $tab . str_replace("\n", "\n" . $tab, $model);
 	}
 
-	public function functionArray(array $functions, array $default_value = []){
+	/**
+	 * Returns the data needed to structure a function or method of a class
+	 * 
+	 * @param  array  $functions
+	 * @param  array  $default_value
+	 * @return array
+	 */
+	public function functionArray(array $functions, array $default_value = []) : array
+	{
 		if(empty($functions)) return ['datas' => [], 'class' => []];
 		$k_b = $this->template_config['keyword'];
 		$import_class = [];
@@ -175,7 +209,15 @@ trait Helpers {
 		// code...
 	}
 
-	public function inArray($search, $datas){
+	/**
+	 * Searches for a character pattern in the values of an array
+	 * 
+	 * @param  string $search
+	 * @param  array $datas
+	 * @return bool
+	 */
+	public function inArray($search, $datas) : bool
+	{
 		foreach ($datas as $key => $value)
 			if((preg_match('/^\\/.*\\/$/i', $value) && preg_match($value, $search)) || $value == $search)
 				return true;
@@ -183,15 +225,16 @@ trait Helpers {
 	}
 
 	/**
-	 * [getMigrationDatas description]
+	 * Get column data from a migration table
 	 * 
-	 * @param  [type] $args            [description]
-	 * @param  [type] $call_back       *
-	 * @param  [type] $foreign_default [description]
-	 * @param  [type] $modifiers_def   [description]
-	 * @return [type]                  [description]
+	 * @param  array                 $args
+	 * @param  object|callable|null  $call_back
+	 * @param  array                 $foreign_default
+	 * @param  string|array          $modifiers_def
+	 * @return array
 	 */
-	public function getMigrationDatas($args, $call_back, $foreign_default, $modifiers_def = null){
+	public function getMigrationDatas($args, $call_back, $foreign_default, $modifiers_def = null) : array
+	{
 		$ret = [];
 		$cols = $this->colone($args['columns'], false)['cols'];
 
@@ -236,6 +279,15 @@ trait Helpers {
 		return $this->colone($ret, false, false);
 	}
 
+	/**
+	 * Returns a class import structure
+	 * 
+	 * @param  array         $args
+	 * @param  string        $key_
+	 * @param  string|mixed  $default_
+	 * @param  string|null   $pattern
+	 * @return string|mixed
+	 */
 	public function importClass($args, $key_, $default_, $pattern = null){
 		$datas = ['default' => $default_];
 		$datas['new'] = isset($args[2][$key_]['import_class']) && is_array($args[2][$key_]['import_class'])
@@ -256,6 +308,16 @@ trait Helpers {
 		}
 	}
 
+	/**
+	 * Returns a trait import structure
+	 * 
+	 * @param  array         $args
+	 * @param  string        $key_
+	 * @param  string|mixed  $default_
+	 * @param  string        $kw_imp_cls
+	 * @param  string        $kw_trt
+	 * @return string|bool|mixed
+	 */
 	public function importTrait($args, $key_, $default_, $kw_imp_cls, $kw_trt){
 		// $call_col = config('compio-db.conf.helpers.colone');
 		// $checked_class_import = config('compio-db.conf.helpers.checked_class_import');
@@ -285,7 +347,18 @@ trait Helpers {
 		}
 	}
 
-	public function implement($args, $key, $default_, $kw_imp_cls, $kw_ext){
+	/**
+	 * Returns an interface implementation structure
+	 * 
+	 * @param  array         $args
+	 * @param  string        $key
+	 * @param  array|string  $default_
+	 * @param  string        $kw_imp_cls
+	 * @param  string        $kw_ext
+	 * @return string|bool
+	 */
+	public function implement($args, $key, $default_, $kw_imp_cls, $kw_ext)
+	{
 		$file_content = $args[4];
 		$implement_class = isset($args[2][$key]['implement']) && is_string($args[2][$key]['implement']) ? $args[2][$key]['implement'] : $default_;
 		$k_b = $this->template_config['keyword'];
@@ -313,7 +386,18 @@ trait Helpers {
 		return '';
 	}
 
-	public function extend($args, $key, $default_, $kw_imp_cls, $kw_ext){
+	/**
+	 * Returns the structure of the extended class
+	 * 
+	 * @param  array   $args
+	 * @param  string  $key
+	 * @param  string  $default_
+	 * @param  string  $kw_imp_cls
+	 * @param  string  $kw_ext
+	 * @return string|bool
+	 */
+	public function extend($args, $key, $default_, $kw_imp_cls, $kw_ext)
+	{
 		$file_content = $args[4];
 		$extend_class = isset($args[2][$key]['extend']) && is_string($args[2][$key]['extend']) ? $args[2][$key]['extend'] : $default_;
 		$k_b = $this->template_config['keyword'];
@@ -332,15 +416,24 @@ trait Helpers {
 		} else return '';
 	}
 
-	public function checkedClassImport($file, $classes, $pattern = null){
+	/**
+	 * Returns classes to import into a namespace
+	 * 
+	 * @param  string        $file_content
+	 * @param  array|string  $classes
+	 * @param  string        $pattern
+	 * @return array
+	 */
+	public function checkedClassImport($file_content, $classes, $pattern = null) : array
+	{
 		$pattern = is_null($pattern) ? '/^<\\?php[\s\S]+namespace.*([\s\S]+;)[\s\S]+class/i' : $pattern;
 		$ret = [];
 		$classes = is_string($classes) ? [$classes] : $classes;
 		if(is_array($classes) && !empty($classes)){
 			foreach ($classes as $cls) {
-				preg_match($pattern, $file, $m);
+				preg_match($pattern, $file_content, $m);
 				$m = explode(';', str_replace(['; ', 'use '], [';', ''], trim(preg_replace('/[\s]+/i', ' ', preg_replace('/as .*| as .*/i', '', end($m))))));
-				// echo $file . "\n";
+				// echo $file_content . "\n";
 				if(!in_array($cls, $m))
 					$ret[] = $cls;
 			}
@@ -348,6 +441,16 @@ trait Helpers {
 		return $ret;
 	}
 
+	/**
+	 * Returns a structured string for the properties of a Model of a Laravel DB
+	 * 
+	 * @param  array          $arguments
+	 * @param  array|string   $template
+	 * @param  array          $conf
+	 * @param  array          $new_conf
+	 * @param  callable|null  $call_render
+	 * @return string
+	 */
 	public function propertyModel($arguments, $template, $conf, $new_conf, $call_render = null){
 		$render = '';
 		$template = is_array($template) ? $template : [$template];
@@ -380,9 +483,23 @@ trait Helpers {
 				$render = (empty($datas) && count($template) > 1 && end($template) === true || empty($rr)) ? '' : str_replace('---replace---', $rr, current($template));
 			}
 		}
+		dump($render);
 		return $render;
 	}
 
+	/**
+	 * Returns a structured string for the functions (or methods) of a Model of a Laravel DB
+	 * 
+	 * @param  array     $args
+	 * @param  array     $conf
+	 * @param  string    $model_class
+	 * @param  string    $keyword_
+	 * @param  array     $default_dts
+	 * @param  array     $new_dts
+	 * @param  callable  $return_render
+	 * @param  callable  $description_render
+	 * @return string|null|bool|mixed
+	 */
 	public function functionModel($args, $conf, $model_class, $keyword_, $default_dts, $new_dts, $return_render, $description_render){
 		$arguments = $args[2];
 		$file_content = $args[4];
@@ -465,7 +582,18 @@ trait Helpers {
 		}
 	}
 
-	public function colone($colones, bool $feature = true, bool $cols = true, $default_ = null){
+	/**
+	 * Returns an array data structure by changing the string value of an element to indexing
+	 * keys if the key is a number
+	 * 
+	 * @param  array|string      $colones
+	 * @param  bool|boolean      $feature
+	 * @param  bool|boolean      $cols
+	 * @param  null|array|mixed  $default_
+	 * @return array
+	 */
+	public function colone($colones, bool $feature = true, bool $cols = true, $default_ = null) : array
+	{
 		$ret = [];
 		$feature = $cols === false ? false : $feature;
 		$colones = is_string($colones) ? [$colones] : $colones;
@@ -496,12 +624,13 @@ trait Helpers {
 	}
 
 	/**
-	 * [callLocate description]
+	 * Returns an enclosing string of `resource_path(...)`
 	 * 
-	 * @param  [type] $default_value [description]
-	 * @return [type]                [description]
+	 * @param  string  $default_value
+	 * @return string
 	 */
-	public function callLocate($default_value) {
+	public function callLocate(string $default_value) : string
+	{
 		return empty(trim($default_value)) || trim($default_value) == "''" ? '' : ('resource_path(' . implode('), resource_path(', explode(',', str_replace(["\n", "\r", "\t"], '', $default_value))) . ')');
 	}
 
