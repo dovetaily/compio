@@ -3,6 +3,7 @@
 namespace Compio\Component;
 
 use Compio\Traits\ComponentCaller;
+use Compio\Compio;
 
 class Path {
 
@@ -119,16 +120,16 @@ class Path {
 
 			$short = [];
 			foreach (explode('\\', trim($this->name()->getClassName(), '\\')) as $value) $short[] = $this->convert_case($value, $convert_case);
-			$short = implode('\\', $short);
+			$short = implode(Compio::pathSep(), $short);
 
-			$f = $val . '\\' . $short . '.' . $ext;
+			$f = $val . Compio::pathSep() . $short . '.' . $ext;
 
 			$vv = pathinfo($f);
 
 			$vv['basename'] = $vv['filename'] . '.'. $vv['extension'];
-			$vv['file'] = $vv['dirname'] . '\\' . $vv['basename'];
+			$vv['file'] = $vv['dirname'] . Compio::pathSep() . $vv['basename'];
 			$vv['short_dirname'] = trim(pathinfo($short)['dirname'], '.');
-			$vv['short'] = $vv['short_dirname'] . '\\' . $vv['filename'];
+			$vv['short'] = $vv['short_dirname'] . Compio::pathSep() . $vv['filename'];
 
 			if(is_callable($change_file) && ($ret = $change_file(...[$vv, $k, $value])) !== null) $vv['new'] = $ret;
 			// if(is_callable($change_file)) $vv['new'] = $change_file($vv);
@@ -161,7 +162,7 @@ class Path {
 		if (!is_string($type) && is_callable($type)) {
 
 			return is_string($val = $type(...[$value])) && !empty(trim($val)) && \Compio\Component\Name::nameIsCheck($val, ['name'])
-				? (((bool) preg_match('/' . preg_quote($value) . '/i', $val)) == true
+				? (((bool) preg_match('/' . preg_quote($value, "/") . '/i', $val)) == true
 					? $val
 					: strtolower($value)
 				)

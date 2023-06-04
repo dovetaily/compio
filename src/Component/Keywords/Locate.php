@@ -44,7 +44,7 @@ trait Locate {
 
 			$sh = array_key_exists('short_path', $tt) ? (is_array($tt['short_path']) ? end($tt['short_path']) : $tt['short_path']) : 'components';
 
-			$res = trim(str_replace(['/', '\\', '..'], '.', ($sh . '.' . $path["short_dirname"] . '.' . preg_replace('/(.*)' . preg_quote($ext) . '$/', '$1', $path["basename"]))), '.');
+			$res = trim(str_replace(['/', '\\', '..'], '.', ($sh . '.' . $path["short_dirname"] . '.' . preg_replace('/(.*)' . preg_quote($ext, "/") . '$/', '$1', $path["basename"]))), '.');
 		}
 
 		return $res;
@@ -66,15 +66,15 @@ trait Locate {
 		if(is_array($tt) && !empty($tt)){
 
 			$short = array_key_exists('path', $tt) && !empty($tt['path']) && !empty($cr = current($tt['path'])) && array_key_exists('short', $cr) && ((is_array($cr['short']) && !empty($cr['short']) && is_string($cr = end($cr['short']))) || is_string($cr = $cr['short']))
-				? trim($cr, '\\')
-				: trim($this->name()->getClassName(), '\\')
+				? trim($cr, \Compio\Compio::pathSep())
+				: trim(trim($this->name()->getClassName(), \Compio\Compio::pathSep()), \Compio\Compio::pathSep(true))
 			;
 
 			$tt = array_key_exists('short_path', $tt) ? $tt['short_path'] : 'components';
 			$tt = is_array($tt) ? end($tt) : $tt;
-			$tt = trim(trim(str_replace('/', '\\', is_string($tt) ? $tt : 'components')), '\\');
+			$tt = trim(trim(str_replace(\Compio\Compio::pathSep(true), \Compio\Compio::pathSep(), is_string($tt) ? $tt : 'components')), \Compio\Compio::pathSep());
 
-			$res = $tt . '\\' . $short . ($ext === null 
+			$res = $tt . \Compio\Compio::pathSep() . $short . ($ext === null 
 				? '.' . $t
 				: ($ext === 'YE@**@!!@&@T!!'
 					? null
