@@ -18,7 +18,7 @@ class Seeder extends Base {
 	 * @return [type] [description]
 	 */
 	public function seeder_namespace(){
-		return version_compare(Application::VERSION, '8', '>=') ? ("\nnamespace Database\\" . ucfirst(preg_replace('/^'.preg_quote(database_path()).'\\\\(.*)/', '$1', pathinfo($this->file_path)['dirname'])) . ";\n") : '';
+		return version_compare(Application::VERSION, '8', '>=') ? ("\nnamespace Database\\" . ucfirst(preg_replace('/^'.preg_quote(database_path() . \Compio\Compio::pathSep(), "/").'(.*)/', '$1', pathinfo($this->file_path)['dirname'])) . ";\n") : '';
 		// return 'App\Repositories' . (($n = end($this->template_datas['path'])['short_dirname']) != '' ? ('\\' . $n) : null);
 	}
 
@@ -108,8 +108,8 @@ class Seeder extends Base {
 		$cols = $this->colone($this->arguments['columns']);
 		$version = version_compare(Application::VERSION, '8', '>=') ? true : false;
 		$d = $version ? 'seeders' : 'seeds';
-		$sm_path = preg_replace('/^'.preg_quote(database_path() . '\\' . $d).'\\\\(.*)$/', '$1', $this->file_path);
-		$factory_file = database_path('factories\\' . preg_replace('/(.*)TableSeeder(\\.php)$/', '$1Factory$2', $sm_path));
+		$sm_path = preg_replace('/^'.preg_quote(database_path() . \Compio\Compio::pathSep() . $d . \Compio\Compio::pathSep(), "/").'(.*)$/', '$1', $this->file_path);
+		$factory_file = database_path('factories' . \Compio\Compio::pathSep() . preg_replace('/(.*)TableSeeder(\\.php)$/', '$1Factory$2', $sm_path));
 		$model = $this->all_keywords['seeder']['@model_class'];
 		$render = '';
 		$conf = isset($this->arguments['seeder']['conf']) ? $this->arguments['seeder']['conf'] : [];

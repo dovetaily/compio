@@ -86,7 +86,7 @@ class Template {
 				'require' => true,
 				'verif' => function($value){
 
-					return is_string($value) && is_readable($value)
+					return is_string($value) && is_readable(\Compio\Compio::adaptPath($value))
 						? true
 						: (!is_string($value) 
 							? 'La clé `template_file` n\'est pas une chaîne de caractère !'

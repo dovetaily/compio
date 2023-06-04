@@ -5,6 +5,7 @@ namespace Compio\TemplateEngines\Blade\V_sup_eq_5_5\Factories;
 use Compio\Component\ComponentBase;
 use Compio\Traits\Factory;
 use Compio\Traits\Singleton;
+use Compio\Compio;
 
 use Illuminate\Support\Str;
 
@@ -57,7 +58,7 @@ class Component extends ComponentBase {
 				'template' => [
 					'migration' => [
 						'path' => Foundation::getAppDir('\database\migrations'),
-						'template_file' => dirname(__DIR__) . '\resources\data\migration.compio',
+						'template_file' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\migration.compio'),
 						'generate' => true,
 						'convert_case' => 'd',
 						// 'convert_case' => ['camel', 'uf'],
@@ -66,8 +67,8 @@ class Component extends ComponentBase {
 							$path_info['filename'] = date('Y_m_d_His') . '_create_' . Str::snake(Str::plural($path_info['filename'])) .'_table';
 							sleep(1);
 							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
-							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
-							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							$path_info['file'] = $path_info['dirname'] . Compio::pathSep() . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? (Compio::pathSep() . $path_info['filename']) : ($path_info['short_dirname'] . Compio::pathSep() . $path_info['filename']));
 							return $path_info;
 						},
 						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Migration',
@@ -85,15 +86,15 @@ class Component extends ComponentBase {
 					],
 					'model' => [
 						'path' => Foundation::getAppDir('\app\Models'),
-						'template_file' => dirname(__DIR__) . '\resources\data\model.compio',
+						'template_file' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\model.compio'),
 						'generate' => true,
 						// 'convert_case' => 'camel',
 						'convert_case' => ['camel', 'uf'],
 						'change_file' => function(array $path_info){
 							$path_info['filename'] = Str::singular($path_info['filename']);
 							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
-							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
-							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							$path_info['file'] = $path_info['dirname'] . Compio::pathSep() . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? (Compio::pathSep() . $path_info['filename']) : ($path_info['short_dirname'] . Compio::pathSep() . $path_info['filename']));
 							return $path_info;
 						},
 						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Model',
@@ -118,14 +119,14 @@ class Component extends ComponentBase {
 					],
 					'factory' => [
 						'path' => Foundation::getAppDir('\database\factories'),
-						'template_file' => dirname(__DIR__) . '\resources\data\\' . (version_compare(\Illuminate\Foundation\Application::VERSION, '8', '>=') ? 'factory.v.sup.8.compio' : 'factory.compio'),
+						'template_file' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\\' . (version_compare(\Illuminate\Foundation\Application::VERSION, '8', '>=') ? 'factory.v.sup.8.compio' : 'factory.compio')),
 						'generate' => true,
 						'convert_case' => ['camel', 'uf'],
 						'change_file' => function(array $path_info){
 							$path_info['filename'] = Str::singular($path_info['filename']) . 'Factory';
 							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
-							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
-							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							$path_info['file'] = $path_info['dirname'] . Compio::pathSep() . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? (Compio::pathSep() . $path_info['filename']) : ($path_info['short_dirname'] . Compio::pathSep() . $path_info['filename']));
 							return $path_info;
 						},
 						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Factory',
@@ -143,14 +144,14 @@ class Component extends ComponentBase {
 					],
 					'seeder' => [
 						'path' => Foundation::getAppDir('\database\\' . (version_compare(\Illuminate\Foundation\Application::VERSION, '8', '>=') ? 'seeders' : 'seeds')),
-						'template_file' => dirname(__DIR__) . '\resources\data\seeder.compio',
+						'template_file' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\seeder.compio'),
 						'generate' => true,
 						'convert_case' => ['camel', 'uf'],
 						'change_file' => function(array $path_info){
 							$path_info['filename'] = Str::singular($path_info['filename']) . 'TableSeeder';
 							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
-							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
-							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							$path_info['file'] = $path_info['dirname'] . Compio::pathSep() . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? (Compio::pathSep() . $path_info['filename']) : ($path_info['short_dirname'] . Compio::pathSep() . $path_info['filename']));
 							return $path_info;
 						},
 						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Seeder',
@@ -169,14 +170,14 @@ class Component extends ComponentBase {
 					],
 					'repository' => [
 						'path' => Foundation::getAppDir('\app\Repositories'),
-						'template_file' => dirname(__DIR__) . '\resources\data\repository.compio',
+						'template_file' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\repository.compio'),
 						'generate' => true,
 						'convert_case' => ['camel', 'uf'],
 						'change_file' => function(array $path_info){
 							$path_info['filename'] = Str::singular($path_info['filename']) . 'Repository';
 							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
-							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
-							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							$path_info['file'] = $path_info['dirname'] . Compio::pathSep() . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? (Compio::pathSep() . $path_info['filename']) : ($path_info['short_dirname'] . Compio::pathSep() . $path_info['filename']));
 							return $path_info;
 						},
 						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Repository',
@@ -195,14 +196,14 @@ class Component extends ComponentBase {
 					],
 					'resource' => [
 						'path' => Foundation::getAppDir('\app\Http\Resources'),
-						'template_file' => dirname(__DIR__) . '\resources\data\resource.compio',
+						'template_file' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\resource.compio'),
 						'generate' => true,
 						'convert_case' => ['camel', 'uf'],
 						'change_file' => function(array $path_info){
 							$path_info['filename'] = Str::singular($path_info['filename']) . 'Resource';
 							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
-							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
-							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							$path_info['file'] = $path_info['dirname'] . Compio::pathSep() . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? (Compio::pathSep() . $path_info['filename']) : ($path_info['short_dirname'] . Compio::pathSep() . $path_info['filename']));
 							return $path_info;
 						},
 						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Resource',
@@ -221,15 +222,15 @@ class Component extends ComponentBase {
 					],
 					'request' => [
 						'path' => [Foundation::getAppDir('\app\Http\Requests'), Foundation::getAppDir('\app\Http\Requests')],
-						'template_file' => dirname(__DIR__) . '\resources\data\request.compio',
+						'template_file' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\request.compio'),
 						'generate' => true,
 						'convert_case' => ['camel', 'uf'],
 						'change_file' => function(array $path_info, $file_index, $all_template_path){
 							// $path_info['filename'] = Str::singular($path_info['filename']) . ($file_index === 0 ? 'Update' : ($file_index === 1 ? 'Store' : null)) . 'Request';
 							$path_info['filename'] = Str::singular($path_info['filename']) . ($file_index === 0 ? 'Store' : ($file_index === 1 ? 'Update' : null)) . 'Request';
 							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
-							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
-							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							$path_info['file'] = $path_info['dirname'] . Compio::pathSep() . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? (Compio::pathSep() . $path_info['filename']) : ($path_info['short_dirname'] . Compio::pathSep() . $path_info['filename']));
 							return $path_info;
 						},
 						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Request',
@@ -250,14 +251,14 @@ class Component extends ComponentBase {
 					],
 					'controller' => [
 						'path' => [Foundation::getAppDir('\app\Http\Controllers\Api\V1'), Foundation::getAppDir('\app\Http\Controllers')],
-						'template_file' => dirname(__DIR__) . '\resources\data\controller.compio',
+						'template_file' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\controller.compio'),
 						'generate' => true,
 						'convert_case' => ['camel', 'uf'],
 						'change_file' => function(array $path_info){
 							$path_info['filename'] = Str::singular($path_info['filename']) . 'Controller';
 							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
-							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
-							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							$path_info['file'] = $path_info['dirname'] . Compio::pathSep() . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? (Compio::pathSep() . $path_info['filename']) : ($path_info['short_dirname'] . Compio::pathSep() . $path_info['filename']));
 							return $path_info;
 						},
 						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Controller',
@@ -287,24 +288,24 @@ class Component extends ComponentBase {
 						'path' => ['index' => ($pt = Foundation::getAppDir('\resources\views\pages')), 'create' => $pt, 'show' => $pt, 'edit' => $pt, 'find' => $pt],
 
 						'template_file' => [
-							'index' => dirname(__DIR__) . '\resources\data\page\index.blade',
-							'create' => dirname(__DIR__) . '\resources\data\page\create.blade',
-							'show' => dirname(__DIR__) . '\resources\data\page\show.blade',
-							'edit' => dirname(__DIR__) . '\resources\data\page\edit.compio',
-							'find' => dirname(__DIR__) . '\resources\data\page\find.compio',
-							dirname(__DIR__) . '\resources\data\page.compio'
+							'index' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\page\index.blade'),
+							'create' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\page\create.blade'),
+							'show' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\page\show.blade'),
+							'edit' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\page\edit.compio'),
+							'find' => Compio::adaptPath(dirname(__DIR__) . '\resources\data\page\find.compio'),
+							Compio::adaptPath(dirname(__DIR__) . '\resources\data\page.compio')
 						],
 						'generate' => true,
 						'convert_case' => 'd',
 						// 'convert_case' => ['camel', 'uf'],
 						'change_file' => function($path_info, $key, $component){
-							$path_info['dirname'] .= '\\' . $path_info['filename'];
+							$path_info['dirname'] .= Compio::pathSep() . $path_info['filename'];
 							$path_info['extension'] = 'blade.php';
 							$path_info['filename'] = $key;
 							// $path_info['filename'] = Str::singular($path_info['filename']);
 							$path_info['basename'] = $path_info['filename'] . '.'. $path_info['extension'];
-							$path_info['file'] = $path_info['dirname'] . '\\' . $path_info['basename'];
-							$path_info['short'] = ($path_info['short_dirname'] == '' ? ('\\' . $path_info['filename']) : ($path_info['short_dirname'] . '\\' . $path_info['filename']));
+							$path_info['file'] = $path_info['dirname'] . Compio::pathSep() . $path_info['basename'];
+							$path_info['short'] = ($path_info['short_dirname'] == '' ? (Compio::pathSep() . $path_info['filename']) : ($path_info['short_dirname'] . Compio::pathSep() . $path_info['filename']));
 							return $path_info;
 						},
 						'keyword_class' => '\Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template\Page',
@@ -347,8 +348,8 @@ class Component extends ComponentBase {
 			: [
 				'template' => [
 					'class' => [
-						'path' => $this->getRootPath() . '\app\View\Components',
-						'template_file' => dirname(__DIR__) . '\resources\component\class.php',
+						'path' => Foundation::getAppDir('\app\View\Components'),
+						'template_file' => Compio::adaptPath(dirname(__DIR__) . '\resources\component\class.php'),
 						'generate' => true,
 						'convert_case' => 'uf',
 						'keywords' => [
@@ -365,10 +366,10 @@ class Component extends ComponentBase {
 						]
 					],
 					'render' => [
-						'path' => $this->getRootPath() . '\resources\views\components',
+						'path' => Foundation::getAppDir('\resources\views\components'),
 						'file_extension' => 'blade.php',
 						'short_path' => 'components',
-						'template_file' => dirname(__DIR__) . '\resources\component\render.php',
+						'template_file' => Compio::adaptPath(dirname(__DIR__) . '\resources\component\render.php'),
 						'generate' => true,
 						'keywords' => [
 							'@component_name',
@@ -376,20 +377,20 @@ class Component extends ComponentBase {
 						]
 					],
 					'css' => [
-						'path' => $this->getRootPath() . '\public\css\components',
+						'path' => Foundation::getAppDir('\public\css\components'),
 						'file_extension' => 'css',
-						'short_path' => 'css\components',
-						'template_file' => dirname(__DIR__) . '\resources\component\css.php',
+						'short_path' => Compio::adaptPath('css\components'),
+						'template_file' => Compio::adaptPath(dirname(__DIR__) . '\resources\component\css.php'),
 						'generate' => true,
 						'keywords' => [
 							'@class_html',
 						]
 					],
 					'js' => [
-						'path' => $this->getRootPath() . '\public\js\components',
+						'path' => Foundation::getAppDir('\public\js\components'),
 						'file_extension' => 'js',
-						'short_path' => 'js\components',
-						'template_file' => dirname(__DIR__) . '\resources\component\js.php',
+						'short_path' => Compio::adaptPath('js\components'),
+						'template_file' => Compio::adaptPath(dirname(__DIR__) . '\resources\component\js.php'),
 						'generate' => true,
 						'keywords' => [
 							'@class_html',
@@ -457,7 +458,7 @@ class Component extends ComponentBase {
 					: [$rec['path']]
 				) as $path) {
 
-					if(is_string($path) && file_exists($file = $path . '\\' . str_replace('/', '\\', $this->name()->getName()) . '.' . $ext))
+					if(is_string($path) && file_exists($file = $path . Compio::pathSep() . str_replace(Compio::pathSep(true), Compio::pathSep(), $this->name()->getName()) . '.' . $ext))
 						$p[$template] = $file;
 
 				}

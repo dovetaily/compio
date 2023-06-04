@@ -64,7 +64,8 @@ class Controller extends Base {
 
 
 	public function controller_namespace(){
-		return 'App' . preg_replace('/^'.preg_quote(app_path()).'(.*)/', '$1', pathinfo($this->file_path)['dirname']);
+		return str_replace('/', '\\', ucfirst(pathinfo($this->getRelativeFilePath())['dirname']));
+		// return str_replace('/', '\\', 'App' . preg_replace('/^'.preg_quote(app_path(), "/").'(.*)/', '$1', pathinfo($this->file_path)['dirname']));
 		// return 'App\Repositories' . (($n = end($this->template_datas['path'])['short_dirname']) != '' ? ('\\' . $n) : null);
 	}
 
@@ -610,7 +611,7 @@ class Controller extends Base {
 					? "\n@param " . (preg_replace('/(.*\\$.*) =.*|(.*\\$.*)=.*/i', '$1$2', implode("\n@param ", $args)))
 					: null
 				) . (!empty($type_returned)
-					? "\n" . "@return " . implode('|', $type_returned) 
+					? "\n" . "@return " . str_replace('/', '\\', implode('|', $type_returned))
 					: null
 				)
 			);

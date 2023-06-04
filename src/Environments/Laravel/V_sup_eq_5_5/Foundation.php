@@ -1,6 +1,7 @@
 <?php
 
 namespace Compio\Environments\Laravel\V_sup_eq_5_5;
+use Compio\Compio;
 
 abstract class Foundation {
 
@@ -39,7 +40,7 @@ abstract class Foundation {
 		for($i = $back; $i > 0; $i--)
 			$d = dirname($d);
 
-		return $d . (!empty($path) ? '\\' . trim(str_replace('/', '\\', $path), '\\') : null);
+		return Compio::adaptPath($d . (!empty($path) ? Compio::pathSep() . trim(str_replace(Compio::pathSep(true), Compio::pathSep(), $path), Compio::pathSep()) : null));
 
 	}
 
@@ -76,7 +77,7 @@ abstract class Foundation {
 	 */
 	protected static function command_path_exist() {
 
-		return file_exists(self::$command_path) && is_dir(self::$command_path) ? self::$command_path : false;
+		return file_exists(Compio::adaptPath(self::$command_path)) && is_dir(Compio::adaptPath(self::$command_path)) ? Compio::adaptPath(self::$command_path) : false;
 
 	}
 
@@ -112,7 +113,7 @@ abstract class Foundation {
 
 				$new_content = preg_replace('/(require base_path[(\s]+\'routes\/console\.php\'[);\s]+)/', 'require_once ' . $command_path . ";\n\t\t$1",$file_content);
 
-				$pattern = '/(' . preg_quote("require_once " . $command_path) . ')/i';
+				$pattern = '/(' . preg_quote("require_once " . $command_path, "/") . ')/i';
 
 				if(((bool) preg_match($pattern, $file_content)) === false){
 
@@ -137,15 +138,15 @@ abstract class Foundation {
 	 */
 	public static function init_config(){
 
-		$config_file_path = config_path('compio.php');
+		$config_file_path = Compio::adaptPath(config_path('compio.php'));
 
 		if(!file_exists($config_file_path)){
 
-			$config_path = dirname($config_file_path);
+			$config_path = Compio::adaptPath(dirname($config_file_path));
 
 			if(file_exists($config_path) || mkdir($config_path, 0777, true)){
 
-				$template_config_file = __DIR__ . '\resources\config.php';
+				$template_config_file = Compio::adaptPath(__DIR__ . '\resources\config.php');
 
 				if(copy($template_config_file, $config_file_path)) echo "\n\t  ~ The configuration file `" . $config_file_path . "` has been created !\n";
 				else echo "\n\t  ~ Error ! Le fichier ne peut être créé !\n";

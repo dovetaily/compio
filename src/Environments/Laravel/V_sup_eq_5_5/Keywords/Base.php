@@ -4,6 +4,7 @@ namespace Compio\Environments\Laravel\V_sup_eq_5_5\Keywords;
 
 use Compio\Traits\ArgumentFormat;
 use Compio\Environments\Laravel\V_sup_eq_5_5\Foundation;
+use Compio\Compio;
 
 class Base {
 
@@ -112,7 +113,7 @@ class Base {
 	 * @return string
 	 */
 	public function getRelativeFilePath(bool $inverse = false){
-		preg_match('/^' . preg_quote(Foundation::getAppDir() . '\\') . '(.*)/', $this->file_path, $m);
+		preg_match('/^' . preg_quote(Foundation::getAppDir() . Compio::pathSep(), "/") . '(.*)/', $this->file_path, $m);
 		return $inverse ? Foundation::getAppDir() : end($m);
 	}
 

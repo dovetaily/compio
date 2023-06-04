@@ -4,6 +4,7 @@ namespace Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Template;
 
 use Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Base;
 use Illuminate\Support\Str;
+use Compio\Compio;
 
 use Compio\Environments\Laravel\V_sup_eq_5_5\Keywords\Helpers;
 
@@ -50,7 +51,7 @@ class Page extends Base {
 	 * @return [type] [description]
 	 */
 	public function class_html(){
-		preg_match('/.*\\\(.*)\\.blade\\.php$/i', $this->file_path, $m);
+		preg_match('/.*' . preg_quote(Compio::pathSep(), '/') . '(.*)\\.blade\\.php$/i', $this->file_path, $m);
 		return 'page-'. $this->template_name . '-' . end($m) . '-' . substr(str_shuffle('abcdefghijklmnopqrstuvwxyz0123456789'), 0, 8);
 	}
 
@@ -60,7 +61,7 @@ class Page extends Base {
 	 * @return [type] [description]
 	 */
 	public function content(){
-		preg_match('/.*\\\(.*)\\.blade\\.php$/i', $this->file_path, $m);
+		preg_match('/.*' . preg_quote(Compio::pathSep(), '/') . '(.*)\\.blade\\.php$/i', $this->file_path, $m);
 		$type = end($m);
 		return '{{-- ... --}}';
 	}
@@ -71,7 +72,7 @@ class Page extends Base {
 	 * @return [type] [description]
 	 */
 	public function additional(){
-		preg_match('/.*\\\(.*)\\.blade\\.php$/i', $this->file_path, $m);
+		preg_match('/.*' . preg_quote(Compio::pathSep(), '/') . '(.*)\\.blade\\.php$/i', $this->file_path, $m);
 		$type = end($m);
 		return '';
 	}
@@ -93,7 +94,7 @@ class Page extends Base {
 	 * @return [type]       [description]
 	 */
 	public function page_title(...$args){
-		preg_match('/.*\\\(.*)\\.blade\\.php$/i', $this->file_path, $m);
+		preg_match('/.*' . preg_quote(Compio::pathSep(), '/') . '(.*)\\.blade\\.php$/i', $this->file_path, $m);
 		$type = ' | ' . Str::title(end($m));
 		return isset($this->arguments['page']['title']) ? (!is_string($this->arguments['page']['title']) && is_callable($this->arguments['page']['title']) ? $this->arguments['page']['title'](end($m), ...$args) : $this->arguments['page']['title']) : "'" . Str::singular(Str::title(str_replace('_', ' ', $this->template_name))) . $type . "'";
 	}

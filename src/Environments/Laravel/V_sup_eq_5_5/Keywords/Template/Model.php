@@ -17,7 +17,7 @@ class Model extends Base {
 	 */
 	public function model_namespace(){
 
-		return ucfirst(pathinfo($this->getRelativeFilePath())['dirname']);
+		return str_replace('/', '\\', ucfirst(pathinfo($this->getRelativeFilePath())['dirname']));
 
 	}
 
@@ -462,7 +462,7 @@ class Model extends Base {
 					? "\n@param " . (preg_replace('/(.*\\$.*) =.*|(.*\\$.*)=.*/i', '$1$2', implode("\n@param ", $args)))
 					: null
 				) . (!empty($type_returned)
-					? "\n" . "@return " . implode('|', $type_returned) 
+					? "\n" . "@return " . str_replace("/", "\\", implode('|', $type_returned))
 					: null
 				)
 			);

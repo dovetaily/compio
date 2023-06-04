@@ -45,7 +45,8 @@ class Request extends Base {
 	 * @return [type] [description]
 	 */
 	public function request_namespace(){
-		return 'App' . preg_replace('/^'.preg_quote(app_path()).'(.*)/', '$1', pathinfo($this->file_path)['dirname']);
+		return str_replace('/', '\\', ucfirst(pathinfo($this->getRelativeFilePath())['dirname']));
+		// return 'App' . preg_replace('/^'.preg_quote(app_path(), "/").'(.*)/', '$1', pathinfo($this->file_path)['dirname']);
 	}
 
 	/**

@@ -49,4 +49,15 @@ class Compio {
 		;
 	}
 
+	/**
+	 * Return
+	 * 
+	 * @param bool  $inverse
+	 * @return string 
+	 */
+	public static function pathSep(bool $inverse = false) : string
+	{
+		return preg_match('/window[s]/i', PHP_OS_FAMILY) || $inverse === true ? '\\' : '/';
+	}
+
 }

@@ -150,7 +150,7 @@ trait Helpers {
 					foreach ($value['type_returned'] as $k => $v){
 						if(isset($k_b[$v])) $value['type_returned'][$k] = $k_b[$v];
 						if(!in_array($vl = $value['type_returned'][$k], $import_class) && preg_match('/\\\/i', $vl))
-							$import_class[] = $vl;
+							$import_class[] = str_replace('/', '\\', $vl);
 					}
 				$value['args'] = isset($value['args']) && !empty($ret = $this->colone($value['args'], false)) ? $ret['cols'] : null;
 				if(is_array($value['args']) && !empty($value['args']))
@@ -173,7 +173,7 @@ trait Helpers {
 								foreach ($v1 as $k => $v) {
 									if(isset($k_b[$v])) $value['args'][$k1][$k] = $k_b[$v];
 									if(!in_array($vl = $value['args'][$k1][$k], $import_class) && preg_match('/\\\/i', $vl))
-										$import_class[] = $vl;
+										$import_class[] = str_replace('/', '\\', $vl);
 									// code...
 								}
 							}
@@ -304,7 +304,7 @@ trait Helpers {
 				$datas[$key] = isset($k_b[$value]) ? $k_b[$value] : $value;
 			}
 			$datas = $this->checkedClassImport($args[4], $datas, $pattern);
-			return empty($datas) ? '' : "use " . implode(";\nuse ", $datas) . ";";
+			return empty($datas) ? '' : str_replace('/', '\\', "use " . implode(";\nuse ", $datas) . ";");
 		}
 	}
 
@@ -483,7 +483,6 @@ trait Helpers {
 				$render = (empty($datas) && count($template) > 1 && end($template) === true || empty($rr)) ? '' : str_replace('---replace---', $rr, current($template));
 			}
 		}
-		dump($render);
 		return $render;
 	}
 

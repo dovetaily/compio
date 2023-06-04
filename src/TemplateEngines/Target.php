@@ -53,8 +53,8 @@ final class Target {
 								'space' => '\Compio\TemplateEngines\\' . ucfirst($value) . '\\' . $version['space']
 							],
 							'foundation' => '\Compio\TemplateEngines\\' . ucfirst($value) . '\\' . $version['space'] . '\\' . ucfirst($value) . 'Foundation',
-							'version_path' => __DIR__ . '\\' . $value . '\\' . $version['space'],
-							'version_resources_path' => __DIR__ . '\\' . $value . '\\' . $version['space'] . '\resources'
+							'version_path' => \Compio\Compio::adaptPath(__DIR__ . '\\' . $value . '\\' . $version['space']),
+							'version_resources_path' => \Compio\Compio::adaptPath(__DIR__ . '\\' . $value . '\\' . $version['space'] . '\resources')
 						]
 					];
 				}
