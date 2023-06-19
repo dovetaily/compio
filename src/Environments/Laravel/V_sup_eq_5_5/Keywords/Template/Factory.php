@@ -140,7 +140,7 @@ class Factory extends Base {
 						// $ret[$column][] = (isset($value['model_class']) ?  '\\' . trim($value['model_class'], '\\') : ('\\' . $this->model_namespace() . '\\' . ($c = ucfirst(Str::camel($type['#model']))))) . '::inRandomOrder()->take(1)->first()->id';
 						$ret[$column][] = (isset($value['model_class']) ?  '\\' . trim((function($v){$v_ = preg_match('/(.*)as.*/i', $v, $m); return $v_ ? trim(end($m)) : $v;})($value['model_class']), '\\') : ('\\' . $this->model_namespace() . '\\' . ($c = ucfirst(Str::camel($type['#model']))))) . '::inRandomOrder()->take(1)->first()->id';
 					}
-					elseif(($column == 'email' || $column == 'mail')) $ret[$column][] = $f . '->unique()->safeEmail';
+					elseif(($column == 'email' || $column == 'mail')) $ret[$column][] = $f . '->safeEmail';
 					elseif($column == 'password') $ret[$column][] = '\Illuminate\Support\Facades\Hash::make(\'12345678\')';
 					elseif($column == 'username' || $column == 'userName' || $column == 'user_name') $ret[$column][] = $f . '->userName';
 					elseif($column == ($k = 'tld') || $column == ($k = 'ipv4') || $column == ($k = 'ipv6') || $column == ($k = 'name') || $column == ($k = 'emoji')) $ret[$column][] = $f . '->' . $k;

@@ -218,7 +218,14 @@ class Model extends Base {
 				// ...
 				return $ret;
 			})($args[2], $this), false),
-			$this->colone(!empty($conf)
+			(function($dts){
+				if(!empty($dts))
+					foreach ($dts['cols'] as $function_name => $value) {
+						$dts['cols'][$function_name]['type_returned'] = array_key_exists('type_returned', $dts['cols'][$function_name]) ? $dts['cols'][$function_name]['type_returned'] : ['__eloquentHasOne'];
+						$dts['cols'][$function_name]['access'] = array_key_exists('access', $dts['cols'][$function_name]) ? $dts['cols'][$function_name]['access'] : 'public';
+					}
+				return $dts;
+			})($this->colone(!empty($conf)
 				? (is_string($conf)
 					? [$conf => [
 						'type_returned' => ['__eloquentHasOne'],
@@ -228,7 +235,7 @@ class Model extends Base {
 					: $conf
 				)
 				: []
-			, false, true, []),
+			, false, true, [])),
 			function($function_name){
 				return  '$this->hasOne(' . ucfirst(Str::camel($function_name)) . '::class)';
 			},
