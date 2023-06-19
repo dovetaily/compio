@@ -128,6 +128,7 @@ class Resource extends Base {
 			$datas = array_merge_recursive($datas, isset($this->arguments['resource']['datas']) ? $this->colone($this->arguments['resource']['datas'], false, false) : []);
 			$ret = [];
 			foreach ($datas as $column => $value){
+				$value = is_string($value) ? [$value] : $value;
 				if(is_array($value) && !is_null(end($value)) && is_string(end($value)))
 					$ret[] = "'" . (preg_match('/(.*)_id$/i', $column, $m) ? end($m) : $column) . "' => " . end($value);
 			}
