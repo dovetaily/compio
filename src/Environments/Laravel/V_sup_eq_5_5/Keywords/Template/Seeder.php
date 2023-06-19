@@ -18,8 +18,9 @@ class Seeder extends Base {
 	 * @return [type] [description]
 	 */
 	public function seeder_namespace(){
-		return version_compare(Application::VERSION, '8', '>=') ? ("\nnamespace Database\\" . ucfirst(preg_replace('/^'.preg_quote(database_path() . \Compio\Compio::pathSep(), "/").'(.*)/', '$1', pathinfo($this->file_path)['dirname'])) . ";\n") : '';
-		// return 'App\Repositories' . (($n = end($this->template_datas['path'])['short_dirname']) != '' ? ('\\' . $n) : null);
+
+		return version_compare(Application::VERSION, '8', '>=') ? ('namespace '. preg_replace('/^Database\\\seeders(.*)/', 'Database\\Seeders$1',str_replace('/', '\\', ucfirst(pathinfo($this->getRelativeFilePath())['dirname'])) . ";\n")) : '';
+
 	}
 
 	/**

@@ -13,93 +13,224 @@ class Controller extends Base {
 
 
 
+	/**
+	 * [model_full_class description]
+	 * 
+	 * @return [type] [description]
+	 */
 	public function model_full_class(){
+
 		return isset($this->all_keywords['model']['@model_full_class']) ? $this->all_keywords['model']['@model_full_class'] : '';
+
 	}
 
 
+	/**
+	 * [model_class description]
+	 * 
+	 * @return [type] [description]
+	 */
 	public function model_class(){
+
 		return isset($this->all_keywords['model']['@model_class']) ? $this->all_keywords['model']['@model_class'] : '';
+
 	}
 
 
+	/**
+	 * [repository_full_class description]
+	 * 
+	 * @return [type] [description]
+	 */
 	public function repository_full_class(){
+
 		return isset($this->all_keywords['repository']['@repository_full_class']) ? $this->all_keywords['repository']['@repository_full_class'] : '';
+
 	}
 
 
+	/**
+	 * [repository_class description]
+	 * 
+	 * @return [type] [description]
+	 */
 	public function repository_class(){
+
 		return isset($this->all_keywords['repository']['@repository_class']) ? $this->all_keywords['repository']['@repository_class'] : '';
+
 	}
 
 
+	/**
+	 * [resource_namespace description]
+	 * 
+	 * @return [type] [description]
+	 */
 	public function resource_namespace(){
+
 		return isset($this->all_keywords['resource']['@resource_namespace']) ? $this->all_keywords['resource']['@resource_namespace'] : '';
+
 	}
 
 
+	/**
+	 * [resource_full_class description]
+	 * 
+	 * @return [type] [description]
+	 */
 	public function resource_full_class(){
+
 		return isset($this->all_keywords['resource']['@resource_full_class']) ? $this->all_keywords['resource']['@resource_full_class'] : '';
+
 	}
 
 
+	/**
+	 * [resource_class description]
+	 * 
+	 * @return [type] [description]
+	 */
 	public function resource_class(){
+
 		return isset($this->all_keywords['resource']['@resource_class']) ? $this->all_keywords['resource']['@resource_class'] : '';
+
 	}
 
 
+	/**
+	 * [request_namespace description]
+	 * 
+	 * @return [type] [description]
+	 */
 	public function request_namespace(){
+
 		return isset($this->all_keywords['request']['@request_namespace']) ? $this->all_keywords['request']['@request_namespace'] : '';
+
 	}
 
 
+	/**
+	 * [request_full_class description]
+	 * 
+	 * @return [type] [description]
+	 */
 	public function request_full_class(){
+
 		return isset($this->all_keywords['request']['@request_full_class']) ? $this->all_keywords['request']['@request_full_class'] : '';
+
 	}
 
 
+	/**
+	 * [request_class description]
+	 * 
+	 * @return [type] [description]
+	 */
 	public function request_class(){
+
 		return isset($this->all_keywords['request']['@request_class']) ? $this->all_keywords['request']['@request_class'] : '';
+
 	}
 
 
+	/**
+	 * [controller_namespace description]
+	 * 
+	 * @return [type] [description]
+	 */
 	public function controller_namespace(){
+
 		return str_replace('/', '\\', ucfirst(pathinfo($this->getRelativeFilePath())['dirname']));
 		// return str_replace('/', '\\', 'App' . preg_replace('/^'.preg_quote(app_path(), "/").'(.*)/', '$1', pathinfo($this->file_path)['dirname']));
 		// return 'App\Repositories' . (($n = end($this->template_datas['path'])['short_dirname']) != '' ? ('\\' . $n) : null);
+
 	}
 
 
+	/**
+	 * [controller_class description]
+	 * 
+	 * @param  [type] $default_value        [description]
+	 * @param  [type] $template_datas       [description]
+	 * @param  [type] $arguments            [description]
+	 * @param  [type] $calback_format_value [description]
+	 * @return [type]                       [description]
+	 */
 	public function controller_class($default_value, $template_datas, $arguments, $calback_format_value){
+
 		return end($template_datas['path'])['filename'];
+
 	}
 
 
+	/**
+	 * [controller_full_class description]
+	 * 
+	 * @return [type] [description]
+	 */
 	public function controller_full_class(){
+
 		// dump($this->all_keywords['model']['@model_full_class']);
 		return $this->template_datas['keywords']['@controller_namespace']['result'] . '\\' . $this->template_datas['keywords']['@controller_class']['result'];
+
 	}
 
 
+	/**
+	 * [controller_extends description]
+	 * 
+	 * @param  [type] $args [description]
+	 * @return [type]       [description]
+	 */
 	public function controller_extends(...$args){
+
 		return $this->extend($args, 'controller', 'App\Http\Controllers\Controller', '@controller_import_class', '@controller_extends');
+
 	}
 
 
+	/**
+	 * [controller_implements description]
+	 * 
+	 * @param  [type] $args [description]
+	 * @return [type]       [description]
+	 */
 	public function controller_implements(...$args){
+
 		return $this->implement($args, 'controller', null,'@controller_import_class', '@controller_implements');
+
 	}
 
 
+	/**
+	 * [controller_import_trait description]
+	 * 
+	 * @param  [type] $args [description]
+	 * @return [type]       [description]
+	 */
 	public function controller_import_trait(...$args){
+
 		return $this->importTrait($args, 'controller', [
 			// 'Illuminate\Database\Eloquent\Factories\HasFactory',
 		], '@controller_import_class', '@controller_import_trait');
+
 	}
 
 
-	// public function controller_methods(...$args){
+	/**
+	 * [controller_properties description]
+	 * 
+	 * @param  [type] $default_value         [description]
+	 * @param  [type] $template_datas        [description]
+	 * @param  [type] $arguments             [description]
+	 * @param  [type] $callback_format_value [description]
+	 * @param  [type] $current_file_content  [description]
+	 * @param  [type] $file_path             [description]
+	 * @param  [type] $all_keywords          [description]
+	 * @return [type]                        [description]
+	 */
 	public function controller_properties($default_value, $template_datas, $arguments, $callback_format_value, $current_file_content, $file_path, $all_keywords){
+
 		$is_api = (bool) preg_match('/api.*v[0-9]+.*|api.*v[0-9].*/i', $file_path);
 
 		$datas_main = isset($arguments['controller']['properties']) ? $arguments['controller']['properties'] : [];
@@ -200,9 +331,20 @@ class Controller extends Base {
 	}
 
 
+	/**
+	 * [controller_methods description]
+	 * 
+	 * @param  [type] $default_value         [description]
+	 * @param  [type] $template_datas        [description]
+	 * @param  [type] $arguments             [description]
+	 * @param  [type] $callback_format_value [description]
+	 * @param  [type] $current_file_content  [description]
+	 * @param  [type] $file_path             [description]
+	 * @param  [type] $all_keywords          [description]
+	 * @return [type]                        [description]
+	 */
 	public function controller_methods($default_value, $template_datas, $arguments, $callback_format_value, $current_file_content, $file_path, $all_keywords){
-		// dump($all_keywords['model']);
-		// $_call_col = _config('compio-db.conf.helpers.colone');
+
 		$is_api = (bool) preg_match('/api.*v[0-9]+.*|api.*v[0-9].*/i', $file_path);
 		// $datas = !$is_api && isset($arguments['controller']['methods']) 
 		// 	? $arguments['controller']['methods']
@@ -314,7 +456,7 @@ class Controller extends Base {
 					foreach ($tab as $key => $value) {
 						if(preg_match('/(.*)_id$/i', $key, $m)){
 							$m = end($m);
-							$t['class'][$m] = $model_namespace . '\\' . Str::singular(ucfirst($m));
+							$t['class'][$m] = isset($value['model_class']) ? $value['model_class'] : $model_namespace . '\\' . Str::singular(ucfirst($m));
 							$t['datas'][] = "'" . $m . "' => $" . $m;
 						}
 					}
@@ -667,9 +809,16 @@ class Controller extends Base {
 			return true;
 		}
 		return $render;
+
 	}
 
 
+	/**
+	 * [controller_import_class description]
+	 * 
+	 * @param  [type] $args [description]
+	 * @return [type]       [description]
+	 */
 	public function controller_import_class(...$args){
 		return $this->importClass($args, 'controller', [
 			// '__eloquentModel',

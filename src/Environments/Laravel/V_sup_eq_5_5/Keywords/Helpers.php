@@ -242,6 +242,8 @@ trait Helpers {
 			$prg = preg_match('/(.*)_id$/i', $column, $m);
 			$tes = ['__timestamps' => true, '__remember_token' => true, '__soft_deletes' => true];
 			$ret[$column] = is_array($value) ? $value : (!is_null($value) ? ['other' => $value] : []);
+			$table = is_array($value) && isset($value['table']) ? $value['table'] : Str::plural(end($m));
+			if($prg) $ret[$column]['table'] = $table;
 			$ret[$column]['type'] = isset($value['type']) 
 				? (!is_array($value['type'])
 					? [$value['type'] => ($prg ? 'id' : (isset($tes[$column])

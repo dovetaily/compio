@@ -81,6 +81,7 @@ class Component extends ComponentBase {
 							'@migration_column',
 							'@migration_foreign',
 							'@migration_properties',
+							'@migration_down',
 							'@migration_import_class',
 						]
 					],

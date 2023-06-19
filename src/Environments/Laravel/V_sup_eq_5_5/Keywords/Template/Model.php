@@ -134,9 +134,11 @@ class Model extends Base {
 	 * @return [type]       [description]
 	 */
 	public function model_import_trait(...$args){
-		return $this->importTrait($args, 'model', [
-			'Illuminate\Database\Eloquent\Factories\HasFactory',
-		], '@model_import_class', '@model_import_trait');
+		$imp = ['Illuminate\Database\Eloquent\Factories\HasFactory'];
+
+		if(array_key_exists('deleted_at', $this->colone($this->arguments['columns'])['cols'])) $imp[] = 'Illuminate\Database\Eloquent\SoftDeletes';
+
+		return $this->importTrait($args, 'model', $imp, '@model_import_class', '@model_import_trait');
 	}
 
 	/**
