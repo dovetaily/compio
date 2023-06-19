@@ -19,7 +19,7 @@ class Factory extends Base {
 	 */
 	public function factory_namespace(){
 
-		return ucfirst(pathinfo($this->getRelativeFilePath())['dirname']);
+		return str_replace('/', '\\', ucfirst(pathinfo($this->getRelativeFilePath())['dirname']));
 
 	}
 
@@ -53,6 +53,17 @@ class Factory extends Base {
 	public function model_full_class(){
 
 		return isset($this->all_keywords['model']['@model_full_class']) ? $this->all_keywords['model']['@model_full_class'] : '';
+
+	}
+
+	/**
+	 * [model_namespace description]
+	 * 
+	 * @return [type] [description]
+	 */
+	public function model_namespace(){
+
+		return isset($this->all_keywords['model']['@model_namespace']) ? $this->all_keywords['model']['@model_namespace'] : '';
 
 	}
 
@@ -125,7 +136,9 @@ class Factory extends Base {
 
 
 					if($t == '#model'){
-						$ret[$column][] = '\App\Models\\' . ($c = ucfirst(Str::camel($type['#model']))) . '::inRandomOrder()->take(1)->first()->id';
+						// $ret[$column][] = '\App\Models\\' . ($c = ucfirst(Str::camel($type['#model']))) . '::inRandomOrder()->take(1)->first()->id';
+						// $ret[$column][] = (isset($value['model_class']) ?  '\\' . trim($value['model_class'], '\\') : ('\\' . $this->model_namespace() . '\\' . ($c = ucfirst(Str::camel($type['#model']))))) . '::inRandomOrder()->take(1)->first()->id';
+						$ret[$column][] = (isset($value['model_class']) ?  '\\' . trim((function($v){$v_ = preg_match('/(.*)as.*/i', $v, $m); return $v_ ? trim(end($m)) : $v;})($value['model_class']), '\\') : ('\\' . $this->model_namespace() . '\\' . ($c = ucfirst(Str::camel($type['#model']))))) . '::inRandomOrder()->take(1)->first()->id';
 					}
 					elseif(($column == 'email' || $column == 'mail')) $ret[$column][] = $f . '->unique()->safeEmail';
 					elseif($column == 'password') $ret[$column][] = '\Illuminate\Support\Facades\Hash::make(\'12345678\')';
