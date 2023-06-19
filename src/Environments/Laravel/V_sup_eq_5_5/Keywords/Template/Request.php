@@ -123,7 +123,9 @@ class Request extends Base {
 						$ret[$request_type]['rules'][$column][] = 'required';
 						$ret[$request_type]['messages'][$column . '.required'] = '`' . $column . '` is required';
 						if(preg_match('/(.*)_id$/i', $column, $m)){
-							$ret[$request_type]['rules'][$column][] = 'exists:' . $m_nsp . '\\' . ucfirst(Str::camel(end($m))) . ',id';
+							// $ret[$request_type]['rules'][$column][] = 'exists:' . $m_nsp . '\\' . ucfirst(Str::camel(end($m))) . ',id';
+							// $ret[$request_type]['rules'][$column][] = 'exists:' . (isset($value['model_class']) ? trim($value['model_class'], '\\') : ($m_nsp . '\\' . ucfirst(Str::camel(end($m))))) . ',id';
+							$ret[$request_type]['rules'][$column][] = 'exists:' . (isset($value['model_class']) ? trim((function($v){$v_ = preg_match('/(.*)as.*/i', $v, $m); return $v_ ? trim(end($m)) : $v;})($value['model_class']), '\\') : ($m_nsp . '\\' . ucfirst(Str::camel(end($m))))) . ',id';
 							$ret[$request_type]['messages'][$column . '.required'] = '`' . end($m) . '` is required';
 							$ret[$request_type]['messages'][$column . '.exists'] = '`' . end($m) . '` doesn\'t exists !';
 						}
