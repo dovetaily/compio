@@ -117,26 +117,84 @@ class Request extends Base {
 			$ret = [];
 			$cols = $call_back->colone($args['columns']);
 			foreach ((isset($cols['cols']) ? $cols['cols'] : []) as $column => $value) {
+
 				$primary_key = isset($args['model']['primary_key']) ? $args['model']['primary_key'] : (isset($value['primary_key']) ? $value['primary_key'] : 'id');
+				
 				if($column != $primary_key && $column != 'created_at' && $column != 'updated_at' && $column != 'deleted_at' && $column != 'remember_token'){
-					if($request_type == 'store'){
+
+					$ret[$request_type]['rules'][$column] = [];
+
+					$modifiers_exists = is_array($value) && isset($value["modifiers"]) && is_array($value["modifiers"]);
+
+					$require_exists = !(
+						$modifiers_exists && (
+							in_array('nullable', $value["modifiers"]) || isset($value["modifiers"]['nullable']) ||
+							in_array('default', $value["modifiers"]) || isset($value["modifiers"]['default']) ||
+							in_array('useCurrent', $value["modifiers"]) || isset($value["modifiers"]['useCurrent'])
+						)
+					);
+
+					if($request_type == 'store' && $require_exists){
 						$ret[$request_type]['rules'][$column][] = 'required';
 						$ret[$request_type]['messages'][$column . '.required'] = '`' . $column . '` is required';
-						if(preg_match('/(.*)_id$/i', $column, $m)){
-							// $ret[$request_type]['rules'][$column][] = 'exists:' . $m_nsp . '\\' . ucfirst(Str::camel(end($m))) . ',id';
-							// $ret[$request_type]['rules'][$column][] = 'exists:' . (isset($value['model_class']) ? trim($value['model_class'], '\\') : ($m_nsp . '\\' . ucfirst(Str::camel(end($m))))) . ',id';
-							$ret[$request_type]['rules'][$column][] = 'exists:' . (isset($value['model_class']) ? trim((function($v){$v_ = preg_match('/(.*)as.*/i', $v, $m); return $v_ ? trim(end($m)) : $v;})($value['model_class']), '\\') : ($m_nsp . '\\' . ucfirst(Str::camel(end($m))))) . ',id';
+					}
+
+					// $table = is_array($value) && isset($value['table']) ? $value['table'] : (isset($this->all_keywords['migration']['@migration_table']) ? $this->all_keywords['migration']['@migration_table'] : $this->template_name);
+					$table = isset($this->all_keywords['migration']['@migration_table']) ? $this->all_keywords['migration']['@migration_table'] : $this->template_name;
+
+					if(preg_match('/(.*)_id$/i', $column, $m)){
+						$ret[$request_type]['rules'][$column][] = 'exists:' . (isset($value['model_class']) ? trim((function($v){$v_ = preg_match('/(.*)as.*/i', $v, $m); return $v_ ? trim(end($m)) : $v;})($value['model_class']), '\\') : ($m_nsp . '\\' . ucfirst(Str::camel(end($m))))) . ',id';
+						if($request_type == 'store' && $require_exists)
 							$ret[$request_type]['messages'][$column . '.required'] = '`' . end($m) . '` is required';
-							$ret[$request_type]['messages'][$column . '.exists'] = '`' . end($m) . '` doesn\'t exists !';
+						$ret[$request_type]['messages'][$column . '.exists'] = '`' . end($m) . '` doesn\'t exists !';
+					}
+
+					// if(!$require_exists && $request_type != 'update') $ret[$request_type]['rules'][$column][] = 'nullable';
+
+					foreach ([
+						'nullable' => ['cnd' => !$require_exists /*&& $request_type != 'update'*/, 'message' => null],
+						'unique' => ['val' => 'unique:' . $table . ',' . $column, 'message' => '`' . $column . '` is already exists'],
+					] as $modif => $vv) {
+						$vv = is_array($vv) ? $vv : ['val' => $vv];
+						$cnd = array_key_exists('cnd', $vv) ? $vv['cnd'] : $modifiers_exists && (in_array($modif, $value["modifiers"]) || isset($value["modifiers"][$modif]));
+						if($cnd){
+							$ret[$request_type]['rules'][$column][] = $vv['val'] ?? $modif;
+							if(!array_key_exists('message', $vv) || $vv['message'] !== null)
+								$ret[$request_type]['messages'][$column . '.' . ($vv['rule'] ?? $modif)] = $vv['message'] ?? null;
 						}
-						// elseif(preg_match('/(.*)_id$/i', $column, $m)){
-						// }
 					}
-					elseif($request_type == 'update'){
-						$ret[$request_type]['rules'][$column] = null;
-						$ret[$request_type]['messages'][$column] = null;
+
+					$v_type = isset($value['type']) ? $this->colone($value['type'], false, false) : []; 
+
+					$enum = (isset($v_type['enum']) ? (function($str){
+						try {
+							eval('$val = ' . $str . ';');
+							$str = $val;
+						} catch (\Exception $e) {}
+						return ['o' => $str, 't' => is_array($str) ? '##-->' . str_replace(["\n", "\r", "\t"], '', var_export($str, true)) . '<--##' : $str];
+					})(end($v_type['enum'])) : ['t' => null, 'o' => []]);
+
+					foreach ([
+						'enum' => ['val' => $enum['t'], 'message' => '`' . $column . '` is not Conform with values(' . (is_string($enum['o']) ? $enum : implode(', ', $enum['o'])) . ')'],
+						'string' => ['val' => null, 'message' => '`' . $column . '` is not String'],
+						'text' => ['val' => 'string', 'rule' => 'string', 'message' => '`' . $column . '` is not String'],
+						'decimal' => 'decimal:'.(array_key_exists('decimal', $v_type) && is_array($v_type['decimal']) ? (implode(',', (function($vv){ $tab = []; foreach ($vv as $key => $value) {if($value != '#') $tab[] = $value;} return $tab; })($v_type['decimal']))) : 'x,x'),
+						'boolean' => ['val' => null, 'message' => '`' . $column . '` is not Boolean'],
+						'json' => ['val' => null, 'message' => '`' . $column . '` is not Conform to Json'],
+						'integer' => ['val' => null, 'message' => '`' . $column . '` is not Integer'],
+					] as $type => $vv) {
+						$vv = is_array($vv) ? $vv : ['val' => $vv];
+						$cnd = array_key_exists('cnd', $vv) ? $vv['cnd'] : array_key_exists($type, $v_type);
+						if($cnd){
+							$ret[$request_type]['rules'][$column][] = $vv['val'] ?? $type;
+							// if(array_key_exists('message', $vv))
+							if(!array_key_exists('message', $vv) || $vv['message'] !== null)
+								$ret[$request_type]['messages'][$column . '.' . ($vv['rule'] ?? $type)] = $vv['message'] ?? null;
+						}
 					}
-					// elseif(!in_array($request_type, ['store', 'update'])){}
+					foreach ([]){
+						
+					}
 				}
 			}
 			return $ret;
@@ -165,7 +223,14 @@ class Request extends Base {
 			foreach ($datas[$request_type] as $method => $value){
 				$k_word = '@request_' . $method;
 				$render = '[]';
-				if(!empty($value)) $render = str_replace(["  ", "\n"], ["\t", "\n\t\t"], var_export($value, true));
+				if(!empty($value)){
+					$render = str_replace(["  ", "\n"], ["\t", "\n\t\t"], var_export($value, true));
+					// $render = preg_replace_callback('/.*\\'(--><--)\\'/', callback, subject);
+					$render = preg_replace_callback('/(.*)\'##-->(.*)<--##\'(.*)/', function($_){
+						return $_[1] . 'Rule::in(' . str_replace(['\\\'', "\t", ",)"], ["'", "", ')'], $_[2]) . ')' . $_[3];
+					}, $render);
+					// $render = preg_replace('/(.*)\'-->(.*)<--\'(.*)/', '$1Rule::in($2)$3', $render);
+				}
 				$file_content = str_replace($k_word, $render, $file_content);
 			}
 			file_put_contents($this->file_path, $file_content);
@@ -196,6 +261,7 @@ class Request extends Base {
 	 */
 	public function request_import_class(...$args){
 		return $this->importClass($args, 'request', [
+			'Illuminate\Validation\Rule'
 		]);
 	}
 
