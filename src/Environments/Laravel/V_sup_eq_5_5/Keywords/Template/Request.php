@@ -192,9 +192,6 @@ class Request extends Base {
 								$ret[$request_type]['messages'][$column . '.' . ($vv['rule'] ?? $type)] = $vv['message'] ?? null;
 						}
 					}
-					foreach ([]){
-						
-					}
 				}
 			}
 			return $ret;
