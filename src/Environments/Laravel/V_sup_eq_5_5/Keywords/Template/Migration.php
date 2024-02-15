@@ -168,23 +168,49 @@ class Migration extends Base {
 	 * 
 	 * @return string|bool
 	 */
-	public function migration_properties(){
-		$datas = isset($this->arguments['migration']['properties']) ? $this->arguments['migration']['properties'] : [];
+	public function migration_property($type){
+		$datas = isset($this->arguments['migration'][$type]) ? $this->arguments['migration'][$type] : [];
 		$render = '';
 		$dts = [];
-		foreach ($datas as $method => $value) {
-			$dts[] = '$table->' . $method . '(' . (is_array($value) 
-				? implode(',', $value)
-				: (is_string($value)
-					? $value
-					: (is_string($rr = $value(...[$method, $this->arguments]))
-						? $rr
-						: null
+		if(!is_string($datas) && is_callable($datas) && is_string($r = $datas($this->arguments)) $dts = [$r]; 
+		elseif(is_array($datas))
+			foreach ($datas as $method => $value) {
+				$value = is_array($value) 
+					? implode(',', $value)
+					: (is_string($value)
+						? $value
+						: (is_string($rr = $value(...[$method, $this->arguments]))
+							? $rr
+							: null
+						)
 					)
-				)
-			) . ');';
-		}
+				;
+				if(!is_numeric($method))
+					$dts[] = '$table->' . $method . '(' . $value . ');';
+				elseif(!empty($value))
+					$dts[] = $value;
+			}
+		elseif(is_string($datas)) $dts = [$datas];
 		return empty($dts) ? '' : "\n\t\t\t" . implode("\n\t\t\t", $dts);
+	}
+
+	/**
+	 * [migration_properties description]
+	 * 
+	 * @return string|bool
+	 */
+	public function migration_properties(){
+		return $this->migration_property('properties');
+	}
+
+
+	/**
+	 * [migration_end_properties description]
+	 * 
+	 * @return string|bool
+	 */
+	public function migration_end_properties(){
+		return $this->migration_property('end-properties');
 	}
 
 	/**
