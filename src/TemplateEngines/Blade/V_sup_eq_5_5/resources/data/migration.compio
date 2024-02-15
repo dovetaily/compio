@@ -11,7 +11,7 @@ class @class_name@migration_extends@migration_implements
 	 */
 	public function up()
 	{
-		Schema::create('@migration_table', function (Blueprint $table) {@migration_properties@migration_column@migration_foreign
+		Schema::create('@migration_table', function (Blueprint $table) {@migration_properties@migration_column@migration_foreign@migration_end_properties
 		});
 	}
 
